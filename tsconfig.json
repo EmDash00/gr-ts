@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "allowJs": true,
+    "incremental": true,
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "declaration": true,
+    "outDir": "dist",
+    "esModuleInterop": true,
+    "skipLibCheck": true
+  },
+  "files": [
+    "gr.ts",
+    "util.ts",
+    "module.ts",
+    "libGR.js",
+    "libGR.d.ts"
+  ],
+  "exclude": ["dist", "node_modules"]
+}
