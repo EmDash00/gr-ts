@@ -1,5 +1,5 @@
 {
-  "name": "@EmDash00/gr",
+  "name": "gr",
   "description": "WASM bindings for the GR framework.",
   "version": "0.1.0",
   "license": "MIT",
