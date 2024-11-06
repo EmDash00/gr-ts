@@ -1,4 +1,4 @@
-import libGR from "./libGR.js"; // Adjust the path as necessary
+import libGR from "./wasm/libGR.js";
 import ModuleConfig from "./module.js";
 import { GRModule } from "./module.js";
 import { assertEqualLength } from "./util.js";

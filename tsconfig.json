@@ -6,16 +6,10 @@
     "module": "ESNext",
     "moduleResolution": "bundler",
     "declaration": true,
+    "rootDirs": ["src/"],
     "outDir": "dist",
     "esModuleInterop": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
   },
-  "files": [
-    "gr.ts",
-    "util.ts",
-    "module.ts",
-    "libGR.js",
-    "libGR.d.ts"
-  ],
-  "exclude": ["dist", "node_modules"]
+  "exclude": ["dist", "node_modules", "./src/jsterm.js", "./src/library.js"]
 }
