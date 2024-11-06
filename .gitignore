@@ -4,6 +4,7 @@
 /tmp
 /out-tsc
 fonts/
+dist/tsconfig.tsbuildinfo
 
 # Runtime data
 pids
