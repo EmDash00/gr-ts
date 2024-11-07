@@ -1,4 +1,4 @@
-import { MainModule } from "./wasm/libGR.js";
+import { MainModule } from "./libgr";
 
 interface Extras {
   preRun: [];

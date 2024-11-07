@@ -1,6 +1,6 @@
-import libGR from "./wasm/libGR.js";
+import libGR from "./libgr";
 import ModuleConfig from "./module.js";
-import { GRModule } from "./module.js";
+import type { GRModule } from "./module.js";
 import { assertEqualLength } from "./util.js";
 
 // constants
