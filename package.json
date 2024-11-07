@@ -10,8 +10,8 @@
     "url": "https://github.com/EmDash00/gr-ts.git"
   },
   "scripts": {
-    "buildall": "make && tsc && cpx -v src/wasm/libGR.wasm dist/wasm/",
-    "build": "tsc && cpx -v src/wasm/libGR.wasm dist/wasm/"
+    "buildall": "make && tsc && cpx -v src/libgr/index.wasm dist/libgr/",
+    "build": "tsc && cpx -v src/libgr/index.wasm dist/libgr/"
   },
   "files": [
     "./dist/**/*"

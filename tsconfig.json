@@ -11,5 +11,5 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
   },
-  "exclude": ["dist", "node_modules", "./src/jsterm.js", "./src/library.js"]
+  "exclude": ["dist", "build", "node_modules", "./src/jsterm.js", "./src/library.js"]
 }
