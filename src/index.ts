@@ -46,6 +46,6 @@ ModuleConfig.locateFile = async function (filename: string) {
   }
 };
 
-async function loadGRRuntime() {
+export async function loadGRRuntime() {
   return await import("./runtime.js");
 }

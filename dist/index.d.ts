@@ -2,3 +2,4 @@ export { NOCLIP, CLIP, ARROWSTYLE, COLOR_MODEL, INTERP2_METHOD, LINESPEC, PRINT_
 export declare let isReady: boolean;
 export declare let readyCallbacks: (() => void)[];
 export declare function onGRReady(callback: () => void): any;
+export declare function loadGRRuntime(): Promise<typeof import("./runtime.js")>;

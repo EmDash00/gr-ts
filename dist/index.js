@@ -15,6 +15,6 @@ ModuleConfig.locateFile = async function (filename) {
         return "./libgr/libgr.wasm";
     }
 };
-async function loadGRRuntime() {
+export async function loadGRRuntime() {
     return await import("./runtime.js");
 }
