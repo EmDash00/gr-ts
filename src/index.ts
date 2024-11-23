@@ -30,7 +30,6 @@ import {
 
 export let isReady = false;
 export let readyCallbacks: (() => void)[] = [];
-export let manifestPath = "/manifest.json";
 
 export function onGRReady(callback: () => void) {
   if (!isReady) {

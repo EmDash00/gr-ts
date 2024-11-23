@@ -1,7 +1,6 @@
 import ModuleConfig from "./module.js";
 export let isReady = false;
 export let readyCallbacks = [];
-export let manifestPath = "/manifest.json";
 export function onGRReady(callback) {
     if (!isReady) {
         readyCallbacks.push(callback);
