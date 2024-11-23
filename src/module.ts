@@ -8,7 +8,6 @@ interface Extras {
   canvas: HTMLCanvasElement;
   context: CanvasRenderingContext2D;
   totalDependencies: number;
-  onRuntimeInitialized(): void;
   locateFile(filename: string): void;
   printErr(text: string): void;
   get_dash_list(linetype: number): number[];
@@ -20,7 +19,6 @@ export type GRModule = Partial<MainModule> & Extras;
 const ModuleConfig: GRModule = {
   preRun: [],
   postRun: [],
-  onRuntimeInitialized: function() {},
   locateFile: function(filename: string) {},
   printErr: function (text) {
     if (arguments.length > 1) {
