@@ -7,7 +7,6 @@ interface Extras {
     canvas: HTMLCanvasElement;
     context: CanvasRenderingContext2D;
     totalDependencies: number;
-    onRuntimeInitialized(): void;
     locateFile(filename: string): void;
     printErr(text: string): void;
     get_dash_list(linetype: number): number[];

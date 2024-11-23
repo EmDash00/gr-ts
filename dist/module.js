@@ -1,7 +1,6 @@
 const ModuleConfig = {
     preRun: [],
     postRun: [],
-    onRuntimeInitialized: function () { },
     locateFile: function (filename) { },
     printErr: function (text) {
         if (arguments.length > 1) {

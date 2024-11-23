@@ -1,0 +1,375 @@
+export declare const NOCLIP = 0;
+export declare const CLIP = 1;
+export declare enum COORDINATES {
+    WC = 0,
+    NDC = 1
+}
+export declare enum FILL_INTSTYLE {
+    HOLLOW = 0,
+    SOLID = 1,
+    PATTERN = 2,
+    HATCH = 3
+}
+export declare enum TEXT_HALIGN {
+    NORMAL = 0,
+    LEFT = 1,
+    CENTER = 2,
+    RIGHT = 3
+}
+export declare enum TEXT_VALIGN {
+    NORMAL = 0,
+    TOP = 1,
+    CAP = 2,
+    HALF = 3,
+    BASE = 4,
+    BOTTOM = 5
+}
+export declare enum TEXT_PATH {
+    RIGHT = 0,
+    LEFT = 1,
+    UP = 2,
+    DOWN = 3
+}
+/**
+ * The appearance of a font depends on the text precision value specified.
+  * STRING, CHARACTER or STROKE precision allows for a greater or lesser
+  * realization of the text primitives, for efficiency. STRING is the
+  * default precision for GR and produces the high quality output using either
+  * native font rendering or FreeType. OUTLINE uses the GR path rendering
+  * functions to draw individual glyphs and produces the highest quality
+  * output.
+ */
+export declare enum TEXT_PRECISION {
+    STRING = 0,
+    CHAR = 1,
+    STROKE = 2,
+    OUTLINE = 3
+}
+export declare enum LINETYPE {
+    SOLID = 1,
+    DASHED = 2,
+    DOTTED = 3,
+    DASHED_DOTTED = 4,
+    DASH_2_DOT = -1,
+    DASH_3_DOT = -2,
+    LONG_DASH = -3,
+    LONG_SHORT_DASH = -4,
+    SPACED_DASH = -5,
+    SPACED_DOT = -6,
+    DOUBLE_DOT = -7,
+    TRIPLE_DOT = -8
+}
+export declare enum MARKERTYPE {
+    DOT = 1,
+    PLUS = 2,
+    ASTERISK = 3,
+    CIRCLE = 4,
+    DIAGONAL_CROSS = 5,
+    SOLID_CIRCLE = -1,
+    TRIANGLE_UP = -2,
+    SOLID_TRI_UP = -3,
+    TRIANGLE_DOWN = -4,
+    SOLID_TRI_DOWN = -5,
+    SQUARE = -6,
+    SOLID_SQUARE = -7,
+    BOWTIE = -8,
+    SOLID_BOWTIE = -9,
+    HOURGLASS = -10,
+    SOLID_HGLASS = -11,
+    DIAMOND = -12,
+    SOLID_DIAMOND = -13,
+    STAR = -14,
+    SOLID_STAR = -15,
+    TRI_UP_DOWN = -16,
+    SOLID_TRI_RIGHT = -17,
+    SOLID_TRI_LEFT = -18,
+    HOLLOW_PLUS = -19,
+    SOLID_PLUS = -20,
+    PENTAGON = -21,
+    HEXAGON = -22,
+    HEPTAGON = -23,
+    OCTAGON = -24,
+    STAR_4 = -25,
+    STAR_5 = -26,
+    STAR_6 = -27,
+    STAR_7 = -28,
+    STAR_8 = -29,
+    VLINE = -30,
+    HLINE = -31,
+    OMARK = -32
+}
+export declare enum ARROWSTYLE {
+    SINGLE_ENDED_SIMPLE = 1,
+    SINGLE_ENDED_SIMPLE_ACUTE_HEAD = 2,
+    SINGLE_ENDED_HOLLOW = 3,
+    SINGLE_ENDED_FILLEd = 4,
+    SINGLE_ENDED_TRIANGLE = 5,
+    SINGLE_ENDED_FILLED_TRIANGLE = 6,
+    SINGLE_ENDED_KITE = 7,
+    SINGLE_ENDED_FILLED_KITE = 8,
+    DOUBLE_ENDED_SIMPLE = 9,
+    DOUBLE_ENDED_SIMPLE_ACUTE_HEAD = 10,
+    DOUBLE_ENDED_HOLLOW = 11,
+    DOUBLE_ENDED_FILLEd = 12,
+    DOUBLE_ENDED_TRIANGLE = 13,
+    DOUBLE_ENDED_FILLED_TRIANGLE = 14,
+    DOUBLE_ENDED_KITE = 15,
+    DOUBLE_ENDED_FILLED_KITE = 16,
+    SINGLE_ENDED_DOUBLE_LINE = 17,
+    DOUBLE_ENDED_DOUBLE_LINE = 18
+}
+export declare enum INTERP2_METHOD {
+    NEAREST = 0,
+    LINEAR = 1,
+    SPLINE = 2,
+    CUBIC = 3
+}
+export declare enum SPLINE_SMOOTHING {
+    CROSS_VALIDATED = 1,
+    NATURAL_CUBIC = 0,
+    B_SPLINE = -1
+}
+export declare enum SCALE_OPTION {
+    X_LOG = 1,
+    Y_LOG = 2,
+    Z_LOG = 4,
+    FLIP_X = 8,
+    FLIP_Y = 16,
+    FLIP_Z = 32,
+    X_LOG2 = 64,
+    Y_LOG2 = 128,
+    Z_LOG2 = 256,
+    X_LN = 512,
+    Y_LN = 1024,
+    Z_LN = 2048
+}
+export declare enum LINESPEC {
+    LINE = 1,
+    MARKER = 2,
+    COLOR = 4
+}
+export declare enum SURFACE_OPTION {
+    LINES = 0,
+    MESH = 1,
+    FILLED_MESH = 2,
+    Z_SHADED_MESH = 3,
+    COLORED_MESH = 4,
+    CELL_ARRAY = 5,
+    SHADED_MESH = 6,
+    MESH_3D = 7
+}
+export declare enum PATH_CODE {
+    STOP = 0,
+    MOVETO = 1,
+    LINETO = 2,
+    CURVE3 = 3,
+    CURVE4 = 4,
+    CLOSEPOLY = 79
+}
+export declare enum COLOR_MODEL {
+    RGB = 0,
+    HSV = 1
+}
+export declare enum COLORMAP {
+    UNIFORM = 0,
+    TEMPERATURE = 1,
+    GRAYSCALE = 2,
+    GLOWING = 3,
+    RAINBOWLIKE = 4,
+    GEOLOGIC = 5,
+    GREENSCALE = 6,
+    CYANSCALE = 7,
+    BLUESCALE = 8,
+    MAGENTASCALE = 9,
+    REDSCALE = 10,
+    FLAME = 11,
+    BROWNSCALE = 12,
+    PILATUS = 13,
+    AUTUMN = 14,
+    BONE = 15,
+    COOL = 16,
+    COPPER = 17,
+    GRAY = 18,
+    HOT = 19,
+    HSV = 20,
+    JET = 21,
+    PINK = 22,
+    SPECTRAL = 23,
+    SPRING = 24,
+    SUMMER = 25,
+    WINTER = 26,
+    GIST_EARTH = 27,
+    GIST_HEAT = 28,
+    GIST_NCAR = 29,
+    GIST_RAINBOW = 30,
+    GIST_STERN = 31,
+    AFMHOT = 32,
+    BRG = 33,
+    BWR = 34,
+    COOLWARM = 35,
+    CMRMAP = 36,
+    CUBEHELIX = 37,
+    GNUPLOT = 38,
+    GNUPLOT2 = 39,
+    OCEAN = 40,
+    RAINBOW = 41,
+    SEISMIC = 42,
+    TERRAIN = 43,
+    VIRIDIS = 44,
+    INFERNO = 45,
+    PLASMA = 46,
+    MAGMA = 47,
+    TEMPERATURE_REVERSED = -1,
+    GRAYSCALE_REVERSED = -2,
+    GLOWING_REVERSED = -3,
+    RAINBOWLIKE_REVERSED = -4,
+    GEOLOGIC_REVERSED = -5,
+    GREENSCALE_REVERSED = -6,
+    CYANSCALE_REVERSED = -7,
+    BLUESCALE_REVERSED = -8,
+    MAGENTASCALE_REVERSED = -9,
+    REDSCALE_REVERSED = -10,
+    FLAME_REVERSED = -11,
+    BROWNSCALE_REVERSED = -12,
+    PILATUS_REVERSED = -13,
+    AUTUMN_REVERSED = -14,
+    BONE_REVERSED = -15,
+    COOL_REVERSED = -16,
+    COPPER_REVERSED = -17,
+    GRAY_REVERSED = -18,
+    HOT_REVERSED = -19,
+    HSV_REVERSED = -20,
+    JET_REVERSED = -21,
+    PINK_REVERSED = -22,
+    SPECTRAL_REVERSED = -23,
+    SPRING_REVERSED = -24,
+    SUMMER_REVERSED = -25,
+    WINTER_REVERSED = -26,
+    GIST_EARTH_REVERSED = -27,
+    GIST_HEAT_REVERSED = -28,
+    GIST_NCAR_REVERSED = -29,
+    GIST_RAINBOW_REVERSED = -30,
+    GIST_STERN_REVERSED = -31,
+    AFMHOT_REVERSED = -32,
+    BRG_REVERSED = -33,
+    BWR_REVERSED = -34,
+    COOLWARM_REVERSED = -35,
+    CMRMAP_REVERSED = -36,
+    CUBEHELIX_REVERSED = -37,
+    GNUPLOT_REVERSED = -38,
+    GNUPLOT2_REVERSED = -39,
+    OCEAN_REVERSED = -40,
+    RAINBOW_REVERSED = -41,
+    SEISMIC_REVERSED = -42,
+    TERRAIN_REVERSED = -43,
+    VIRIDIS_REVERSED = -44,
+    INFERNO_REVERSED = -45,
+    PLASMA_REVERSED = -46,
+    MAGMA_REVERSED = -47
+}
+export declare enum FONT {
+    TIMES_ROMAN = 101,
+    TIMES_ITALIC = 102,
+    TIMES_BOLD = 103,
+    TIMES_BOLDITALIC = 104,
+    HELVETICA = 105,
+    HELVETICA_OBLIQUE = 106,
+    HELVETICA_BOLD = 107,
+    HELVETICA_BOLDOBLIQUE = 108,
+    COURIER = 109,
+    COURIER_OBLIQUE = 110,
+    COURIER_BOLD = 111,
+    COURIER_BOLDOBLIQUE = 112,
+    SYMBOL = 113,
+    BOOKMAN_LIGHT = 114,
+    BOOKMAN_LIGHTITALIC = 115,
+    BOOKMAN_DEMI = 116,
+    BOOKMAN_DEMIITALIC = 117,
+    NEWCENTURYSCHLBK_ROMAN = 118,
+    NEWCENTURYSCHLBK_ITALIC = 119,
+    NEWCENTURYSCHLBK_BOLD = 120,
+    NEWCENTURYSCHLBK_BOLDITALIC = 121,
+    AVANTGARDE_BOOK = 122,
+    AVANTGARDE_BOOKOBLIQUE = 123,
+    AVANTGARDE_DEMI = 124,
+    AVANTGARDE_DEMIOBLIQUE = 125,
+    PALATINO_ROMAN = 126,
+    PALATINO_ITALIC = 127,
+    PALATINO_BOLD = 128,
+    PALATINO_BOLDITALIC = 129,
+    ZAPFCHANCERY_MEDIUMITALIC = 130,
+    ZAPFDINGBATS = 131
+}
+export declare enum SCIENTIFIC_FORMAT_OPTION {
+    E = 1,
+    TEXTEX = 2,
+    MATHTEX = 3
+}
+export declare enum PRINT_TYPE {
+    PS = "ps",
+    EPS = "eps",
+    PDF = "pdf",
+    PGF = "pgf",
+    BMP = "bmp",
+    JPEG = "jpeg",
+    JPG = "jpg",
+    PNG = "png",
+    TIFF = "tiff",
+    TIF = "tif",
+    FIG = "fig",
+    SVG = "svg",
+    WMF = "wmf"
+}
+export declare enum PRINT_FORMAT {
+    A4 = "A4",
+    B5 = "B5",
+    LETTER = "Letter",
+    EXECUTIVE = "Executive",
+    A0 = "A0",
+    A1 = "A1",
+    A2 = "A2",
+    A3 = "A3",
+    A5 = "A5",
+    A6 = "A6",
+    A7 = "A7",
+    A8 = "A8",
+    A9 = "A9",
+    B0 = "B0",
+    B1 = "B1",
+    B2 = "B2",
+    B3 = "B3",
+    B4 = "B4",
+    B6 = "B6",
+    B7 = "B7",
+    B8 = "B8",
+    B9 = "B9",
+    B10 = "B10",
+    C5E = "C5E",
+    COMM10E = "Comm10E",
+    DLE = "DLE",
+    FOLIO = "Folio",
+    LEDGER = "Ledger",
+    TABLOID = "Tabloid"
+}
+export declare enum PRINT_MODE {
+    COLOR = "Color",
+    GRAYSCALE = "Grayscale"
+}
+export declare enum PRINT_ORIENTATION {
+    PORTRAIT = "Portrait",
+    LANDSCAPE = "Landscape"
+}
+export declare enum XFORM {
+    BOOLEAN = 0,
+    LINEAR = 1,
+    LOG = 2,
+    LOGLOG = 3,
+    CUBIC = 4,
+    EQUALIZED = 5
+}
+export declare enum GRM_EVENT {
+    NEW_PLOT = 0,
+    UPDATE_PLOT = 1,
+    SIZE = 2,
+    MERGE_END = 3
+}
