@@ -1,4 +1,5 @@
 import ModuleConfig from "./module.js";
+
 export {
   NOCLIP,
   CLIP,
@@ -27,6 +28,9 @@ export {
   TEXT_VALIGN,
   XFORM,
 } from "./constants.js";
+
+
+export { default } from "./module.js";
 
 export let isReady = false;
 export let readyCallbacks: (() => void)[] = [];
