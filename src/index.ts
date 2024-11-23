@@ -1,5 +1,5 @@
 import ModuleConfig from "./module.js";
-import {
+export {
   NOCLIP,
   CLIP,
   ARROWSTYLE,
