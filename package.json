@@ -11,7 +11,7 @@
   },
   "scripts": {
     "buildall": "make && tsc && cpx -v src/libgr/index.wasm dist/libgr/libgr.wasm",
-    "build": "tsc && cpx -v src/libgr/index.wasm dist/libgr/libgr.wasm"
+    "build": "tsc && cpx -v src/libgr/libgr.wasm dist/libgr"
   },
   "files": [
     "./dist/**/*"
