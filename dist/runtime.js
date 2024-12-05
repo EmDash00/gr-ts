@@ -1,7 +1,7 @@
 import libGR from "./libgr.js";
 import { assertEqualLength } from "./util.js";
 import ModuleConfig from "./module.js";
-import { COLOR_MODEL, GRM_EVENT, } from "./constants";
+import { COLOR_MODEL, GRM_EVENT, } from "./constants.js";
 const Module = (await libGR(ModuleConfig));
 function create_default_canvas(canvasID) {
     console.log("gr.js: will auto create canvas object");
