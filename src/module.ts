@@ -1,4 +1,4 @@
-import { MainModule } from "./libgr";
+import { MainModule } from "./libgr.js";
 
 interface Extras {
   preRun: [];

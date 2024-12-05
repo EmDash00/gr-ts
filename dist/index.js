@@ -13,7 +13,7 @@ export function onGRReady(callback) {
 }
 ModuleConfig.locateFile = async function (filename) {
     if (filename.endsWith(".wasm")) {
-        return "./libgr/libgr.wasm";
+        return "./libgr.wasm";
     }
 };
 export async function loadGRRuntime() {

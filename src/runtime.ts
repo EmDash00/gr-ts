@@ -1,4 +1,4 @@
-import libGR from "./libgr";
+import libGR from "./libgr.js";
 import type { GRModule } from "./module.js";
 import { assertEqualLength } from "./util.js";
 

@@ -1,4 +1,4 @@
-import libGR from "./libgr";
+import libGR from "./libgr.js";
 import { assertEqualLength } from "./util.js";
 import ModuleConfig from "./module.js";
 import { COLOR_MODEL, GRM_EVENT, } from "./constants";

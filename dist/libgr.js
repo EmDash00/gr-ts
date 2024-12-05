@@ -133,12 +133,12 @@ var Module = (() => {
         var isDataURI = filename => filename.startsWith(dataURIPrefix);
         var isFileURI = filename => filename.startsWith("file://");
         function findWasmBinary() { if (Module["locateFile"]) {
-            var f = "index.wasm";
+            var f = "libgr.wasm";
             if (!isDataURI(f)) {
                 return locateFile(f);
             }
             return f;
-        } return new URL("index.wasm", import.meta.url).href; }
+        } return new URL("libgr.wasm", import.meta.url).href; }
         var wasmBinaryFile;
         function getBinarySync(file) { if (file == wasmBinaryFile && wasmBinary) {
             return new Uint8Array(wasmBinary);

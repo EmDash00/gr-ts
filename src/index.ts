@@ -46,7 +46,7 @@ export function onGRReady(callback: () => void) {
 
 ModuleConfig.locateFile = async function (filename: string) {
   if (filename.endsWith(".wasm")) {
-    return "./libgr/libgr.wasm";
+    return "./libgr.wasm";
   }
 };
 
