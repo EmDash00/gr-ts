@@ -25,7 +25,7 @@ import {
   TEXT_PRECISION,
   TEXT_VALIGN,
   XFORM,
-} from "./constants";
+} from "./constants.js";
 
 const Module = (await libGR(ModuleConfig)) as GRModule;
 
