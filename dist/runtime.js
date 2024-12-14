@@ -1,5 +1,5 @@
 import libGR from "./libgr.js";
-import { assertEqualLength } from "./util.js";
+import { assertEqualLength, getContainer, getLength } from "./util.js";
 import ModuleConfig from "./module.js";
 import { COLOR_MODEL, GRM_EVENT, } from "./constants.js";
 const Module = (await libGR(ModuleConfig));
@@ -10,6 +10,92 @@ function create_default_canvas(canvasID) {
     tempElem.innerHTML = tempHtml;
     document.getElementsByTagName("body")[0].appendChild(tempElem.firstChild);
 }
+var MemType;
+(function (MemType) {
+    MemType[MemType["I8"] = 0] = "I8";
+    MemType[MemType["U8"] = 1] = "U8";
+    MemType[MemType["I16"] = 2] = "I16";
+    MemType[MemType["U16"] = 3] = "U16";
+    MemType[MemType["I32"] = 4] = "I32";
+    MemType[MemType["U32"] = 5] = "U32";
+    MemType[MemType["I64"] = 6] = "I64";
+    MemType[MemType["U64"] = 7] = "U64";
+    MemType[MemType["F32"] = 8] = "F32";
+    MemType[MemType["F64"] = 9] = "F64";
+})(MemType || (MemType = {}));
+const HEAP_MAP = {
+    [MemType.I8]: Module.HEAP8,
+    [MemType.U8]: Module.HEAPU8,
+    [MemType.I16]: Module.HEAP16,
+    [MemType.U16]: Module.HEAPU16,
+    [MemType.I32]: Module.HEAP32,
+    [MemType.U32]: Module.HEAPU32,
+    [MemType.I64]: Module.HEAP64,
+    [MemType.U64]: Module.HEAPU64,
+    [MemType.F32]: Module.HEAPF32,
+    [MemType.F64]: Module.HEAPF64,
+};
+const MEMTYPE_SIZE = {
+    [MemType.I8]: 1,
+    [MemType.U8]: 1,
+    [MemType.I16]: 2,
+    [MemType.U16]: 2,
+    [MemType.I32]: 4,
+    [MemType.U32]: 4,
+    [MemType.I64]: 8,
+    [MemType.U64]: 8,
+    [MemType.F32]: 4,
+    [MemType.F64]: 8,
+};
+class MemoryPool {
+    _capacity_bytes;
+    _ptr;
+    static MAX_SIZE_BYTES = 1048576 * 16; // 16 MiB
+    constructor(bytes) {
+        this._ptr = Module._malloc(bytes);
+    }
+    get ptr() {
+        return this._ptr;
+    }
+    get capacity_bytes() {
+        return this._capacity_bytes;
+    }
+    reserve(bytes) {
+        if (bytes > MemoryPool.MAX_SIZE_BYTES) {
+            bytes = Math.max(bytes, MemoryPool.MAX_SIZE_BYTES);
+            console.log("Maximum buffer size of 16 MiB reached for GR plotting.");
+        }
+        this._ptr = Module._realloc(this._ptr, bytes);
+    }
+    copyFrom(container, memtype) {
+        const N = Math.max(getLength(container));
+        for (let i = 0; i < N; i++) {
+            if (i >= this.capacity_bytes) {
+                this.grow();
+            }
+            let array = this.array(memtype);
+            array[i] = getContainer(container, i);
+        }
+    }
+    array(memtype) {
+        return this.asArray(0, this.capacity_bytes / MEMTYPE_SIZE[memtype], memtype);
+    }
+    grow() {
+        this._capacity_bytes *= 2;
+        this._capacity_bytes = Math.max(this.capacity_bytes, MemoryPool.MAX_SIZE_BYTES);
+        this._ptr = Module._realloc(this._ptr, this._capacity_bytes);
+        if (!this._ptr) {
+            throw new Error("Module._realloc failed. Out of memory?");
+        }
+    }
+    asArray(index, length, memtype) {
+        const heap = HEAP_MAP[memtype];
+        const byteSize = MEMTYPE_SIZE[memtype];
+        const ptr = this._ptr / byteSize;
+        return heap.subarray(ptr + index, ptr + index + length);
+    }
+}
+const MEM_POOLS = Array.from({ length: 4 }, () => new MemoryPool(MEMTYPE_SIZE[MemType.F64] * 256));
 export class GRCanvas {
     _original_canvas_size;
     _dpr;
@@ -162,8 +248,8 @@ export class GRCanvas {
      */
     polyline(x, y) {
         const n = assertEqualLength(x, y);
-        const _x = floatarray(x);
-        const _y = floatarray(y);
+        const _x = floatarray(x, 0);
+        const _y = floatarray(y, 1);
         this.select_canvas();
         gr_polyline_c(n, _x, _y);
         freearray(_x);
@@ -176,8 +262,8 @@ export class GRCanvas {
      */
     polymarker(x, y) {
         const n = assertEqualLength(x, y);
-        const _x = floatarray(x);
-        const _y = floatarray(y);
+        const _x = floatarray(x, 0);
+        const _y = floatarray(y, 1);
         this.select_canvas();
         gr_polymarker_c(n, _x, _y);
         freearray(_x);
@@ -209,13 +295,13 @@ export class GRCanvas {
      * The attributes that control the appearance of fill areas are fill area interior
      * style, fill area style index and fill area color index.
      *
-     * @param {number[] | Float64Array} x - A list containing the X coordinates.
-     * @param {number[] | Float64Array} y - A list containing the Y coordinates.
+     * @param {ArrayLike<number> | NdArray} x - A list containing the X coordinates.
+     * @param {ArrayLike<number> | NdArray} y - A list containing the Y coordinates.
      */
     fillarea(x, y) {
         const n = assertEqualLength(x, y);
-        const _x = floatarray(x);
-        const _y = floatarray(y);
+        const _x = floatarray(x, 0);
+        const _y = floatarray(y, 1);
         this.select_canvas();
         gr_fillarea_c(n, _x, _y);
         freearray(_x);
@@ -243,8 +329,8 @@ export class GRCanvas {
     /**
      * Generate a cubic spline-fit, starting from the first data point and
      * ending at the last data point.
-     * @param{number[] | Float64Array} px - A list containing the x coordinates.
-     * @param{number[] | Float64Array} py - A list containing the y coordinates.
+     * @param{ArrayLike<number> | NdArray} px - A list containing the x coordinates.
+     * @param{ArrayLike<number> | NdArray} py - A list containing the y coordinates.
      * @param{number} m - The number of points to be drawn (`m` > `px.length`).
      * @param{SPLINE_SMOOTHING} method - The smoothing method.
      *
@@ -254,8 +340,8 @@ export class GRCanvas {
      */
     spline(px, py, m, method) {
         const n = assertEqualLength(px, py);
-        const _px = floatarray(px);
-        const _py = floatarray(py);
+        const _px = floatarray(px, 0);
+        const _py = floatarray(py, 1);
         this.select_canvas();
         gr_spline_c(n, _px, _py, m, method);
         freearray(_px);
@@ -264,11 +350,11 @@ export class GRCanvas {
     /**
      * Interpolate data from arbitrary points at points on a rectangular grid.
      *
-     * @param{number[] | Float64Array} xd -
+     * @param{ArrayLike<number> | NdArray} xd -
      *  A list containing the X coordinates of the input points.
-     * @param{number[] | Float64Array} yd -
+     * @param{ArrayLike<number> | NdArray} yd -
      *  A list containing the Y coordinates of the input points.
-     * @param{number[] | Float64Array} zd -
+     * @param{ArrayLike<number> | NdArray} zd -
      *  A list containing the Z coordinates of the input points.
      * @param{number} nx - The number of points in the X direction for the output grid.
      * @param{number} ny - The number of points in the Y direction for the output grid.
@@ -279,9 +365,9 @@ export class GRCanvas {
      */
     gridit(xd, yd, zd, nx, ny) {
         const nd = assertEqualLength(xd, yd, zd);
-        const _xd = floatarray(xd);
-        const _yd = floatarray(yd);
-        const _zd = floatarray(zd);
+        const _xd = floatarray(xd, 0);
+        const _yd = floatarray(yd, 1);
+        const _zd = floatarray(zd, 2);
         const _x = Module._malloc(nx * 8);
         const x = Module.HEAPF64.subarray(_x / 8, _x / 8 + nx);
         const _y = Module._malloc(ny * 8);
@@ -892,19 +978,19 @@ export class GRCanvas {
     }
     /**
      * Draw a standard vertical error bar graph.
-     * @param{number[] | Float64Array} px - A list containing the x coordinates.
-     * @param{number[] | Float64Array} py - A list containing the y coordinates.
-     * @param{number[] | Float64Array} e1 -
+     * @param{ArrayLike<number> | NdArray} px - A list containing the x coordinates.
+     * @param{ArrayLike<number> | NdArray} py - A list containing the y coordinates.
+     * @param{ArrayLike<number> | NdArray} e1 -
      *  The absolute values of the lower error bar data.
-     * @param{number[] | Float64Array} e2 -
+     * @param{ArrayLike<number> | NdArray} e2 -
      *  The absolute values of the upper error bar data.
      */
     verrorbars(px, py, e1, e2) {
         const n = assertEqualLength(px, py, e1, e2);
-        const _px = floatarray(px);
-        const _py = floatarray(py);
-        const _e1 = floatarray(e1);
-        const _e2 = floatarray(e2);
+        const _px = floatarray(px, 0);
+        const _py = floatarray(py, 1);
+        const _e1 = floatarray(e1, 2);
+        const _e2 = floatarray(e2, 3);
         this.select_canvas();
         gr_verrorbars_c(n, _px, _py, _e1, _e2);
         freearray(_px);
@@ -914,19 +1000,19 @@ export class GRCanvas {
     }
     /**
      * Draw a standard horizontal error bar graph.
-     * @param{number[] | Float64Array} px - A list containing the x coordinates.
-     * @param{number[] | Float64Array} py - A list containing the y coordinates.
-     * @param{number[] | Float64Array} e1 -
+     * @param{ArrayLike<number> | NdArray} px - A list containing the x coordinates.
+     * @param{ArrayLike<number> | NdArray} py - A list containing the y coordinates.
+     * @param{ArrayLike<number> | NdArray} e1 -
      *  The absolute values of the lower error bar data.
-     * @param{number[] | Float64Array} e2 -
+     * @param{ArrayLike<number> | NdArray} e2 -
      *  The absolute values of the upper error bar data.
      */
     herrorbars(px, py, e1, e2) {
         const n = assertEqualLength(px, py, e1, e2);
-        const _px = floatarray(px);
-        const _py = floatarray(py);
-        const _e1 = floatarray(e1);
-        const _e2 = floatarray(e2);
+        const _px = floatarray(px, 0);
+        const _py = floatarray(py, 1);
+        const _e1 = floatarray(e1, 2);
+        const _e2 = floatarray(e2, 3);
         gr_herrorbars_c(n, _px, _py, _e1, _e2);
         freearray(_px);
         freearray(_py);
@@ -936,9 +1022,9 @@ export class GRCanvas {
     /**
      * Draw a 3D curve using the current line attributes, starting from the
      * first data point and ending at the last data point.
-     * @param {number[] | Float64Array} px - An array of the x coordinates.
-     * @param {number[] | Float64Array} py - An array of the y coordinates.
-     * @param {number[] | Float64Array} pz - An array of the y coordinates.
+     * @param {ArrayLike<number> | NdArray} px - An array of the x coordinates.
+     * @param {ArrayLike<number> | NdArray} py - An array of the y coordinates.
+     * @param {ArrayLike<number> | NdArray} pz - An array of the y coordinates.
      *
      * The values for `x`, `y` and `z` are in world coordinates. The attributes that
      * control the appearance of a polyline are linetype, linewidth and color
@@ -946,9 +1032,9 @@ export class GRCanvas {
      */
     polyline3d(px, py, pz) {
         const n = assertEqualLength(px, py, pz);
-        const _px = floatarray(px);
-        const _py = floatarray(py);
-        const _pz = floatarray(pz);
+        const _px = floatarray(px, 0);
+        const _py = floatarray(py, 1);
+        const _pz = floatarray(pz, 2);
         gr_polyline3d_c(n, _px, _py, _pz);
         freearray(_px);
         freearray(_py);
@@ -1061,21 +1147,24 @@ export class GRCanvas {
     }
     /**
      * Draw a three-dimensional surface plot for the given data points.
-     * @param{number[] | Float64Array} px - A list containing the x coordinates.
-     * @param{number[] | Float64Array} py - A list containing the y coordinates.
-     * @param{number[] | Float64Array} pz -
+     * @param{ArrayLike<number> | NdArray} px - A list containing the x coordinates.
+     * @param{ArrayLike<number> | NdArray} py - A list containing the y coordinates.
+     * @param{ArrayLike<number> | NdArray} pz -
      *  A list of length `px.length` * `py.length` or an appropriately
      *  dimensioned array containing the z coordinates.
      * @param{SURFACE_OPTION} option - Surface display option.
      */
     surface(px, py, pz, option) {
-        if (pz.length != px.length * py.length) {
+        const Nx = getLength(px);
+        const Ny = getLength(py);
+        const Nz = getLength(pz);
+        if (Nz != Nx * Ny) {
             throw Error("Sequences have incorrect length or dimension");
         }
-        const _px = floatarray(px);
-        const _py = floatarray(py);
-        const _pz = floatarray(pz);
-        gr_surface_c(px.length, py.length, _px, _py, _pz, option);
+        const _px = floatarray(px, 0);
+        const _py = floatarray(py, 1);
+        const _pz = floatarray(pz, 2);
+        gr_surface_c(Nx, Ny, _px, _py, _pz, option);
         freearray(_px);
         freearray(_py);
         freearray(_pz);
@@ -1083,11 +1172,11 @@ export class GRCanvas {
     /**
      * Draw contours of a three-dimensional data set whose values are specified
      * over a rectangular mesh. Contour lines may optionally be labeled.
-     * @param{number[] | Float64Array} px - A list containing the x coordinates.
-     * @param{number[] | Float64Array} py - A list containing the y coordinates.
-     * @param{number[] | Float64Array} h -
+     * @param{ArrayLike<number> | NdArray} px - A list containing the x coordinates.
+     * @param{ArrayLike<number> | NdArray} py - A list containing the y coordinates.
+     * @param{ArrayLike<number> | NdArray} h -
      *  A list containing the z coordinates for the height.
-     * @param{number[] | Float64Array} pz -
+     * @param{ArrayLike<number> | NdArray} pz -
      *  A list of length `x.length` * `y.length` containing the z coordinates.
      * @param{number} major_h -
      *  Directs GR to label contour lines. For example, a value of 3 would label
@@ -1096,23 +1185,27 @@ export class GRCanvas {
      *  of 1000 to `major_h`.
      */
     contour(px, py, h, pz, major_h) {
-        if (pz.length != px.length * py.length) {
+        const Nx = getLength(px);
+        const Ny = getLength(py);
+        const Nz = getLength(pz);
+        const Nh = getLength(h);
+        if (Nz != Nx * Ny) {
             throw Error("Sequences have incorrect length or dimension");
         }
-        const _px = floatarray(px);
-        const _py = floatarray(py);
-        const _h = floatarray(h);
-        const _pz = floatarray(pz);
+        const _px = floatarray(px, 0);
+        const _py = floatarray(py, 1);
+        const _h = floatarray(h, 2);
+        const _pz = floatarray(pz, 3);
         this.select_canvas();
-        gr_contour_c(px.length, px.length, h.length, _px, _py, _h, _pz, major_h);
+        gr_contour_c(Nx, Ny, Nh, _px, _py, _h, _pz, major_h);
         freearray(_px);
         freearray(_py);
         freearray(_h);
         freearray(_pz);
     }
     hexbin(n, x, y, nbins) {
-        const _x = floatarray(x);
-        const _y = floatarray(y);
+        const _x = floatarray(x, 0);
+        const _y = floatarray(y, 1);
         const cntmax = gr_hexbin_c(n, _x, _y, nbins);
         freearray(_x);
         freearray(_y);
@@ -1171,8 +1264,8 @@ export class GRCanvas {
         return gr_validaterange_c(amin, amax);
     }
     adjustrange(amin, amax) {
-        const _amin = floatarray([amin]);
-        const _amax = floatarray([amax]);
+        const _amin = floatarray([amin], 0);
+        const _amax = floatarray([amax], 1);
         gr_adjustrange_c(_amin, _amax);
         amin = Module.HEAPF64[_amin / 8];
         amax = Module.HEAPF64[_amax / 8];
@@ -1439,9 +1532,9 @@ export class GRCanvas {
     }
     shade(x, y, lines, xform, roi, w, h) {
         const n = assertEqualLength(x, y, roi);
-        const _x = floatarray(x);
-        const _y = floatarray(y);
-        const _roi = floatarray(roi);
+        const _x = floatarray(x, 0);
+        const _y = floatarray(y, 1);
+        const _roi = floatarray(roi, 2);
         const _bins = Module._malloc(w * h * 4);
         gr_shade_c(n, _x, _y, lines, xform, _roi, w, h, _bins);
         const result = Module.HEAP32.subarray(_bins / 4, _bins / 4 + w * h);
@@ -1452,16 +1545,16 @@ export class GRCanvas {
      * Display a point set as an aggregated and rasterized image. The values
      * for `x` and `y` are in world coordinates.
      *
-     * @param{number[] | Float64Array} x - A list containing the x coordinates.
-     * @param{number[] | Float64Array} y - A list containing the y coordinates.
+     * @param{ArrayLike<number> | NdArray} x - A list containing the x coordinates.
+     * @param{ArrayLike<number> | NdArray} y - A list containing the y coordinates.
      * @param{XFORM} xform - The transformation type to use for color mapping.
      * @param{[number, number]} dims - The size of the grid used for rasterization
      *  (default: `[1200, 1200]`)
      */
     shadepoints(x, y, xform, dims = [1200, 1200]) {
         const n = assertEqualLength(x, y);
-        const _x = floatarray(x);
-        const _y = floatarray(y);
+        const _x = floatarray(x, 0);
+        const _y = floatarray(y, 1);
         this.select_canvas();
         gr_shadepoints_c(_x, _y, xform, dims[0], dims[1]);
     }
@@ -1469,16 +1562,16 @@ export class GRCanvas {
      * Display a line set as an aggregated and rasterized image. The values
      * for `x` and `y` are in world coordinates.
      *
-     * @param{number[] | Float64Array} x - A list containing the x coordinates.
-     * @param{number[] | Float64Array} y - A list containing the y coordinates.
+     * @param{ArrayLike<number> | NdArray} x - A list containing the x coordinates.
+     * @param{ArrayLike<number> | NdArray} y - A list containing the y coordinates.
      * @param{XFORM} xform - The transformation type to use for color mapping.
      * @param{[number, number]} dims - The size of the grid used for rasterization
      *  (default: `[1200, 1200]`)
      */
     shadelines(x, y, xform, dims = [1200, 1200]) {
         const n = assertEqualLength(x, y);
-        const _x = floatarray(x);
-        const _y = floatarray(y);
+        const _x = floatarray(x, 0);
+        const _y = floatarray(y, 1);
         this.select_canvas();
         gr_shadelines_c(n, _x, _y, xform, dims[0], dims[1]);
     }
@@ -1509,8 +1602,8 @@ export class GRCanvas {
         return result;
     }
     path(n, x, y, codes) {
-        const _x = floatarray(x);
-        const _y = floatarray(y);
+        const _x = floatarray(x, 0);
+        const _y = floatarray(y, 1);
         const _codes = uint8arrayfromstring(codes);
         gr_path_c(n, _x, _y, _codes);
         freearray(_x);
@@ -1814,13 +1907,10 @@ function free_vertexarray(ptr, n) {
         freearray(data[i]);
     }
 }
-function floatarray(a) {
-    const ptr = Module._malloc(a.length * 8);
-    const data = Module.HEAPF64.subarray(ptr / 8, ptr / 8 + a.length);
-    for (let i = 0; i < a.length; i++) {
-        data[i] = a[i];
-    }
-    return ptr;
+function floatarray(a, poolIndex) {
+    const N = getLength(a);
+    MEM_POOLS[poolIndex].copyFrom(a, MemType.F64);
+    return MEM_POOLS[poolIndex].ptr;
 }
 function intarray(a) {
     const ptr = Module._malloc(a.length * 4);

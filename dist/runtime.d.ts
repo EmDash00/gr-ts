@@ -1,4 +1,5 @@
 import { ARROWSTYLE, COLOR_MODEL, COLORMAP, FILL_INTSTYLE, FONT, GRM_EVENT, LINETYPE, MARKERTYPE, PATH_CODE, PRINT_FORMAT, PRINT_MODE, PRINT_ORIENTATION, SCALE_OPTION, SCIENTIFIC_FORMAT_OPTION, SPLINE_SMOOTHING, SURFACE_OPTION, TEXT_HALIGN, TEXT_PATH, TEXT_PRECISION, TEXT_VALIGN, XFORM } from "./constants.js";
+import { NdArray } from "numjs";
 export declare class GRCanvas {
     private _original_canvas_size;
     private _dpr;
@@ -57,13 +58,13 @@ export declare class GRCanvas {
      * @param {number[]} x - An array of the x coordinates.
      * @param {number[]} y - An array of the y coordinates.
      */
-    polyline(x: number[] | Float64Array, y: number[] | Float64Array): void;
+    polyline(x: ArrayLike<number> | NdArray, y: ArrayLike<number> | NdArray): void;
     /**
      * Draw marker symbols centered at the given data points.
      * @param {number[]} x - An array of the x coordinates.
      * @param {number[]} y - An array of the y coordinates.
      */
-    polymarker(x: number[] | Float64Array, y: number[] | Float64Array): void;
+    polymarker(x: ArrayLike<number> | NdArray, y: ArrayLike<number> | NdArray): void;
     text: (x: number, y: number, str: string) => void;
     inqtext(x: number, y: number, str: string): [number, number];
     /**
@@ -72,10 +73,10 @@ export declare class GRCanvas {
      * The attributes that control the appearance of fill areas are fill area interior
      * style, fill area style index and fill area color index.
      *
-     * @param {number[] | Float64Array} x - A list containing the X coordinates.
-     * @param {number[] | Float64Array} y - A list containing the Y coordinates.
+     * @param {ArrayLike<number> | NdArray} x - A list containing the X coordinates.
+     * @param {ArrayLike<number> | NdArray} y - A list containing the Y coordinates.
      */
-    fillarea(x: number[] | Float64Array, y: number[] | Float64Array): void;
+    fillarea(x: ArrayLike<number> | NdArray, y: ArrayLike<number> | NdArray): void;
     /**
      * Display rasterlike images in a device-independent manner. The cell array
      * function partitions a rectangle given by two corner points into DIMX X DIMY
@@ -93,8 +94,8 @@ export declare class GRCanvas {
     /**
      * Generate a cubic spline-fit, starting from the first data point and
      * ending at the last data point.
-     * @param{number[] | Float64Array} px - A list containing the x coordinates.
-     * @param{number[] | Float64Array} py - A list containing the y coordinates.
+     * @param{ArrayLike<number> | NdArray} px - A list containing the x coordinates.
+     * @param{ArrayLike<number> | NdArray} py - A list containing the y coordinates.
      * @param{number} m - The number of points to be drawn (`m` > `px.length`).
      * @param{SPLINE_SMOOTHING} method - The smoothing method.
      *
@@ -102,15 +103,15 @@ export declare class GRCanvas {
      * control the appearance of a spline-fit are linetype, linewidth and color
      * index.
      */
-    spline(px: number[] | Float64Array, py: number[] | Float64Array, m: number, method: SPLINE_SMOOTHING): void;
+    spline(px: ArrayLike<number> | NdArray, py: ArrayLike<number> | NdArray, m: number, method: SPLINE_SMOOTHING): void;
     /**
      * Interpolate data from arbitrary points at points on a rectangular grid.
      *
-     * @param{number[] | Float64Array} xd -
+     * @param{ArrayLike<number> | NdArray} xd -
      *  A list containing the X coordinates of the input points.
-     * @param{number[] | Float64Array} yd -
+     * @param{ArrayLike<number> | NdArray} yd -
      *  A list containing the Y coordinates of the input points.
-     * @param{number[] | Float64Array} zd -
+     * @param{ArrayLike<number> | NdArray} zd -
      *  A list containing the Z coordinates of the input points.
      * @param{number} nx - The number of points in the X direction for the output grid.
      * @param{number} ny - The number of points in the Y direction for the output grid.
@@ -119,7 +120,7 @@ export declare class GRCanvas {
      * in the X and Y direction in the output grid and `z` a list containing the
      * interpolated values on the `nx` x `ny` grid points.
      */
-    gridit(xd: number[] | Float64Array, yd: number[] | Float64Array, zd: number[] | Float64Array, nx: number, ny: number): [Float64Array, Float64Array, Float64Array];
+    gridit(xd: ArrayLike<number> | NdArray, yd: ArrayLike<number> | NdArray, zd: ArrayLike<number> | NdArray, nx: number, ny: number): [Float64Array, Float64Array, Float64Array];
     /**
      * Set the line style for polylines.
      * @param{LINETYPE} linetype - The polyline type to apply.
@@ -530,36 +531,36 @@ export declare class GRCanvas {
     grid(x_tick: number, y_tick: number, x_org: number, y_org: number, major_x: number, major_y: number): void;
     /**
      * Draw a standard vertical error bar graph.
-     * @param{number[] | Float64Array} px - A list containing the x coordinates.
-     * @param{number[] | Float64Array} py - A list containing the y coordinates.
-     * @param{number[] | Float64Array} e1 -
+     * @param{ArrayLike<number> | NdArray} px - A list containing the x coordinates.
+     * @param{ArrayLike<number> | NdArray} py - A list containing the y coordinates.
+     * @param{ArrayLike<number> | NdArray} e1 -
      *  The absolute values of the lower error bar data.
-     * @param{number[] | Float64Array} e2 -
+     * @param{ArrayLike<number> | NdArray} e2 -
      *  The absolute values of the upper error bar data.
      */
-    verrorbars(px: number[] | Float64Array, py: number[] | Float64Array, e1: number[] | Float64Array, e2: number[] | Float64Array): void;
+    verrorbars(px: ArrayLike<number> | NdArray, py: ArrayLike<number> | NdArray, e1: ArrayLike<number> | NdArray, e2: ArrayLike<number> | NdArray): void;
     /**
      * Draw a standard horizontal error bar graph.
-     * @param{number[] | Float64Array} px - A list containing the x coordinates.
-     * @param{number[] | Float64Array} py - A list containing the y coordinates.
-     * @param{number[] | Float64Array} e1 -
+     * @param{ArrayLike<number> | NdArray} px - A list containing the x coordinates.
+     * @param{ArrayLike<number> | NdArray} py - A list containing the y coordinates.
+     * @param{ArrayLike<number> | NdArray} e1 -
      *  The absolute values of the lower error bar data.
-     * @param{number[] | Float64Array} e2 -
+     * @param{ArrayLike<number> | NdArray} e2 -
      *  The absolute values of the upper error bar data.
      */
-    herrorbars(px: number[] | Float64Array, py: number[] | Float64Array, e1: number[] | Float64Array, e2: number[] | Float64Array): void;
+    herrorbars(px: ArrayLike<number> | NdArray, py: ArrayLike<number> | NdArray, e1: ArrayLike<number> | NdArray, e2: ArrayLike<number> | NdArray): void;
     /**
      * Draw a 3D curve using the current line attributes, starting from the
      * first data point and ending at the last data point.
-     * @param {number[] | Float64Array} px - An array of the x coordinates.
-     * @param {number[] | Float64Array} py - An array of the y coordinates.
-     * @param {number[] | Float64Array} pz - An array of the y coordinates.
+     * @param {ArrayLike<number> | NdArray} px - An array of the x coordinates.
+     * @param {ArrayLike<number> | NdArray} py - An array of the y coordinates.
+     * @param {ArrayLike<number> | NdArray} pz - An array of the y coordinates.
      *
      * The values for `x`, `y` and `z` are in world coordinates. The attributes that
      * control the appearance of a polyline are linetype, linewidth and color
      * index.
      */
-    polyline3d(px: number[] | Float64Array, py: number[] | Float64Array, pz: number[] | Float64Array): void;
+    polyline3d(px: ArrayLike<number> | NdArray, py: ArrayLike<number> | NdArray, pz: ArrayLike<number> | NdArray): void;
     /**
      * Draw X, Y, and Z coordinate axes with linear and/or logarithmically spaced
      * tick marks.
@@ -655,22 +656,22 @@ export declare class GRCanvas {
     titles3d(x_title: string, y_title: string, z_title: string): void;
     /**
      * Draw a three-dimensional surface plot for the given data points.
-     * @param{number[] | Float64Array} px - A list containing the x coordinates.
-     * @param{number[] | Float64Array} py - A list containing the y coordinates.
-     * @param{number[] | Float64Array} pz -
+     * @param{ArrayLike<number> | NdArray} px - A list containing the x coordinates.
+     * @param{ArrayLike<number> | NdArray} py - A list containing the y coordinates.
+     * @param{ArrayLike<number> | NdArray} pz -
      *  A list of length `px.length` * `py.length` or an appropriately
      *  dimensioned array containing the z coordinates.
      * @param{SURFACE_OPTION} option - Surface display option.
      */
-    surface(px: number[] | Float64Array, py: number[] | Float64Array, pz: number[] | Float64Array, option: SURFACE_OPTION): void;
+    surface(px: ArrayLike<number> | NdArray, py: ArrayLike<number> | NdArray, pz: ArrayLike<number> | NdArray, option: SURFACE_OPTION): void;
     /**
      * Draw contours of a three-dimensional data set whose values are specified
      * over a rectangular mesh. Contour lines may optionally be labeled.
-     * @param{number[] | Float64Array} px - A list containing the x coordinates.
-     * @param{number[] | Float64Array} py - A list containing the y coordinates.
-     * @param{number[] | Float64Array} h -
+     * @param{ArrayLike<number> | NdArray} px - A list containing the x coordinates.
+     * @param{ArrayLike<number> | NdArray} py - A list containing the y coordinates.
+     * @param{ArrayLike<number> | NdArray} h -
      *  A list containing the z coordinates for the height.
-     * @param{number[] | Float64Array} pz -
+     * @param{ArrayLike<number> | NdArray} pz -
      *  A list of length `x.length` * `y.length` containing the z coordinates.
      * @param{number} major_h -
      *  Directs GR to label contour lines. For example, a value of 3 would label
@@ -678,7 +679,7 @@ export declare class GRCanvas {
      *  produces no labels. To produce colored contour lines, add an offset
      *  of 1000 to `major_h`.
      */
-    contour(px: number[] | Float64Array, py: number[] | Float64Array, h: number[] | Float64Array, pz: number[] | Float64Array, major_h: number): void;
+    contour(px: ArrayLike<number> | NdArray, py: ArrayLike<number> | NdArray, h: ArrayLike<number> | NdArray, pz: ArrayLike<number> | NdArray, major_h: number): void;
     hexbin(n: number, x: number[], y: number[], nbins: number): number;
     /**
      * Set the current GR colormap.
@@ -803,29 +804,29 @@ export declare class GRCanvas {
     selectcontext(context: number): void;
     destroycontext(context: number): void;
     uselinespec(str: string): number;
-    shade(x: number[] | Float64Array, y: number[] | Float64Array, lines: number, xform: XFORM, roi: number[] | Float64Array, w: number, h: number): any;
+    shade(x: ArrayLike<number> | NdArray, y: ArrayLike<number> | NdArray, lines: number, xform: XFORM, roi: ArrayLike<number> | NdArray, w: number, h: number): any;
     /**
      * Display a point set as an aggregated and rasterized image. The values
      * for `x` and `y` are in world coordinates.
      *
-     * @param{number[] | Float64Array} x - A list containing the x coordinates.
-     * @param{number[] | Float64Array} y - A list containing the y coordinates.
+     * @param{ArrayLike<number> | NdArray} x - A list containing the x coordinates.
+     * @param{ArrayLike<number> | NdArray} y - A list containing the y coordinates.
      * @param{XFORM} xform - The transformation type to use for color mapping.
      * @param{[number, number]} dims - The size of the grid used for rasterization
      *  (default: `[1200, 1200]`)
      */
-    shadepoints(x: number[] | Float64Array, y: number[] | Float64Array, xform: XFORM, dims?: [number, number]): void;
+    shadepoints(x: ArrayLike<number> | NdArray, y: ArrayLike<number> | NdArray, xform: XFORM, dims?: [number, number]): void;
     /**
      * Display a line set as an aggregated and rasterized image. The values
      * for `x` and `y` are in world coordinates.
      *
-     * @param{number[] | Float64Array} x - A list containing the x coordinates.
-     * @param{number[] | Float64Array} y - A list containing the y coordinates.
+     * @param{ArrayLike<number> | NdArray} x - A list containing the x coordinates.
+     * @param{ArrayLike<number> | NdArray} y - A list containing the y coordinates.
      * @param{XFORM} xform - The transformation type to use for color mapping.
      * @param{[number, number]} dims - The size of the grid used for rasterization
      *  (default: `[1200, 1200]`)
      */
-    shadelines(x: number[] | Float64Array, y: number[] | Float64Array, xform: XFORM, dims?: [number, number]): void;
+    shadelines(x: ArrayLike<number> | NdArray, y: ArrayLike<number> | NdArray, xform: XFORM, dims?: [number, number]): void;
     /**
      * Set the pan and zoom attributes for the current window.
      * @param{number} x - The X coordinate of the pan/zoom point.
@@ -835,7 +836,7 @@ export declare class GRCanvas {
      *   after the requested zoom operation.
      */
     panzoom(x: number, y: number, zoom: number): [number, number, number, number];
-    path(n: number, x: number[] | Float64Array, y: number[] | Float64Array, codes: string): void;
+    path(n: number, x: ArrayLike<number> | NdArray, y: ArrayLike<number> | NdArray, codes: string): void;
     setborderwidth(width: number): void;
     inqborderwidth(): any;
     setbordercolorind(colorind: number): void;

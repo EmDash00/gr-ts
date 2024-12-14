@@ -70,6 +70,7 @@ interface WasmModule {
   _free(_0: number): void;
   _grm_args_delete(_0: number): void;
   _malloc(_0: number): number;
+  _realloc(_0: number, _1: number): number;
   _grm_args_new(): number;
   _grm_args_push(_0: number, _1: number, _2: number, _3: number): number;
   _grm_dump(_0: number, _1: number): void;
