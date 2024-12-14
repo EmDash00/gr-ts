@@ -79,13 +79,19 @@ const MEMTYPE_SIZE: { [key in MemType]: number } = {
   [MemType.F64]: 8,
 };
 
+/**
+ * Preallocated memory pool for buffers.
+ */
 class MemoryPool {
-  protected _capacity_bytes: number;
+  protected _capacity: number;
+  protected _memtype: MemType;
   protected _ptr: number;
-  protected static readonly MAX_SIZE_BYTES: number = 1048576 * 16;  // 16 MiB
+  protected static readonly MAX_SIZE_BYTES: number = 1048576 * 16; // 16 MiB
 
-  constructor(bytes: number) {
-    this._ptr = Module._malloc(bytes);
+  constructor(capacity: number, memtype: MemType) {
+    this._capacity = capacity;
+    this._memtype = memtype;
+    this._ptr = Module._malloc(capacity * MEMTYPE_SIZE[memtype]);
   }
 
   public get ptr(): number {
@@ -93,59 +99,63 @@ class MemoryPool {
   }
 
   get capacity_bytes(): number {
-    return this._capacity_bytes;
+    return this._capacity * MEMTYPE_SIZE[this._memtype];
   }
 
-  public reserve(bytes: number) {
+  get capacity(): number {
+    return this._capacity;
+  }
+
+  public reserve(capacity: number) {
+    let bytes = capacity * MEMTYPE_SIZE[this._memtype];
     if (bytes > MemoryPool.MAX_SIZE_BYTES) {
       bytes = Math.max(bytes, MemoryPool.MAX_SIZE_BYTES);
-      console.log("Maximum buffer size of 16 MiB reached for GR plotting.")
+      console.log("Maximum buffer size of 16 MiB reached for GR plotting.");
     }
     this._ptr = Module._realloc(this._ptr, bytes);
   }
 
-  public copyFrom(
-    container: ArrayLike<number> | NdArray,
-    memtype: MemType,
-  ) {
-    const N = Math.max(getLength(container), );
+  public copyFrom(container: ArrayLike<number> | NdArray) {
+    const N = Math.max(getLength(container));
+
+    let array = this.asArray();
 
     for (let i = 0; i < N; i++) {
-      if (i >= this.capacity_bytes) {
+      if (i >= this.capacity) {
         this.grow();
+        array = this.asArray();
       }
 
-      let array = this.array(memtype);
       array[i] = getContainer(container, i);
     }
   }
 
-  protected array(memtype: MemType) {
-    return this.asArray(0, this.capacity_bytes / MEMTYPE_SIZE[memtype], memtype);
-  }
-
   public grow() {
-    this._capacity_bytes *= 2;
-    this._capacity_bytes = Math.max(this.capacity_bytes, MemoryPool.MAX_SIZE_BYTES);
-    this._ptr = Module._realloc(this._ptr, this._capacity_bytes);
+    this._capacity *= 2;
+
+    const new_capacity_bytes = Math.max(
+      this.capacity_bytes,
+      MemoryPool.MAX_SIZE_BYTES,
+    );
+    this._ptr = Module._realloc(this._ptr, new_capacity_bytes);
 
     if (!this._ptr) {
       throw new Error("Module._realloc failed. Out of memory?");
     }
   }
 
-  public asArray(index: number, length: number, memtype: MemType) {
-    const heap = HEAP_MAP[memtype];
-    const byteSize = MEMTYPE_SIZE[memtype];
+  public asArray(index: number = 0, length: number = this.capacity) {
+    const heap = HEAP_MAP[this._memtype];
+    const byteSize = MEMTYPE_SIZE[this._memtype];
     const ptr = this._ptr / byteSize;
 
     return heap.subarray(ptr + index, ptr + index + length);
   }
 }
 
-const MEM_POOLS: MemoryPool[] = Array.from(
+const F64_MEM_POOLS: MemoryPool[] = Array.from(
   { length: 4 },
-  () => new MemoryPool(MEMTYPE_SIZE[MemType.F64] * 256),
+  () => new MemoryPool(2048, MemType.F64),
 );
 
 export class GRCanvas {
@@ -338,8 +348,6 @@ export class GRCanvas {
 
     this.select_canvas();
     gr_polyline_c(n, _x, _y);
-    freearray(_x);
-    freearray(_y);
   }
 
   /**
@@ -358,8 +366,6 @@ export class GRCanvas {
 
     this.select_canvas();
     gr_polymarker_c(n, _x, _y);
-    freearray(_x);
-    freearray(_y);
   }
 
   public text = function (x: number, y: number, str: string) {
@@ -411,8 +417,6 @@ export class GRCanvas {
 
     this.select_canvas();
     gr_fillarea_c(n, _x, _y);
-    freearray(_x);
-    freearray(_y);
   }
 
   /**
@@ -426,7 +430,7 @@ export class GRCanvas {
    * @param{number} ymax - Upper right edge of the image.
    * @param{number} dimx - X dimension of the color index array.
    * @param{number} dimy - Y dimension of the color index array.
-   * @param{number[] | Int32Array} color - Color index array.
+   * @param{ArrayLike<number> | NdArray} color - Color index array.
    */
   public cellarray(
     xmin: number,
@@ -435,7 +439,7 @@ export class GRCanvas {
     ymax: number,
     dimx: number,
     dimy: number,
-    color: number[] | Int32Array,
+    color: ArrayLike<number> | NdArray,
   ) {
     this.select_canvas();
 
@@ -481,8 +485,6 @@ export class GRCanvas {
 
     this.select_canvas();
     gr_spline_c(n, _px, _py, m, method);
-    freearray(_px);
-    freearray(_py);
   }
 
   /**
@@ -532,13 +534,6 @@ export class GRCanvas {
     result[0].set(x);
     result[1].set(y);
     result[2].set(z);
-
-    freearray(_xd);
-    freearray(_yd);
-    freearray(_zd);
-    freearray(_x);
-    freearray(_y);
-    freearray(_z);
 
     return result;
   }
@@ -1240,10 +1235,6 @@ export class GRCanvas {
 
     this.select_canvas();
     gr_verrorbars_c(n, _px, _py, _e1, _e2);
-    freearray(_px);
-    freearray(_py);
-    freearray(_e1);
-    freearray(_e2);
   }
 
   /**
@@ -1269,10 +1260,6 @@ export class GRCanvas {
     const _e2 = floatarray(e2, 3);
 
     gr_herrorbars_c(n, _px, _py, _e1, _e2);
-    freearray(_px);
-    freearray(_py);
-    freearray(_e1);
-    freearray(_e2);
   }
 
   /**
@@ -1297,9 +1284,6 @@ export class GRCanvas {
     const _pz = floatarray(pz, 2);
 
     gr_polyline3d_c(n, _px, _py, _pz);
-    freearray(_px);
-    freearray(_py);
-    freearray(_pz);
   }
 
   /**
@@ -1479,9 +1463,6 @@ export class GRCanvas {
     const _py = floatarray(py, 1);
     const _pz = floatarray(pz, 2);
     gr_surface_c(Nx, Ny, _px, _py, _pz, option);
-    freearray(_px);
-    freearray(_py);
-    freearray(_pz);
   }
 
   /**
@@ -1522,18 +1503,12 @@ export class GRCanvas {
 
     this.select_canvas();
     gr_contour_c(Nx, Ny, Nh, _px, _py, _h, _pz, major_h);
-    freearray(_px);
-    freearray(_py);
-    freearray(_h);
-    freearray(_pz);
   }
 
   public hexbin(n: number, x: number[], y: number[], nbins: number): number {
     const _x = floatarray(x, 0);
     const _y = floatarray(y, 1);
     const cntmax = gr_hexbin_c(n, _x, _y, nbins);
-    freearray(_x);
-    freearray(_y);
     return cntmax;
   }
 
@@ -1605,8 +1580,6 @@ export class GRCanvas {
     gr_adjustrange_c(_amin, _amax);
     amin = Module.HEAPF64[_amin / 8];
     amax = Module.HEAPF64[_amax / 8];
-    freearray(_amin);
-    freearray(_amax);
     return [amin, amax];
   }
 
@@ -1808,7 +1781,7 @@ export class GRCanvas {
     ymax: number,
     width: number,
     height: number,
-    data: number[] | Int32Array,
+    data: ArrayLike<number> | NdArray,
     model: COLOR_MODEL = COLOR_MODEL.RGB,
   ) {
     this.select_canvas();
@@ -2047,8 +2020,6 @@ export class GRCanvas {
     const _y = floatarray(y, 1);
     const _codes = uint8arrayfromstring(codes);
     gr_path_c(n, _x, _y, _codes);
-    freearray(_x);
-    freearray(_y);
     freearray(_codes);
   }
 
@@ -2468,16 +2439,15 @@ function free_vertexarray(ptr: number, n: number) {
 }
 
 function floatarray(a: ArrayLike<number> | NdArray, poolIndex: number): number {
-  const N = getLength(a);
-  MEM_POOLS[poolIndex].copyFrom(a, MemType.F64);
+  F64_MEM_POOLS[poolIndex].copyFrom(a);
 
-  return MEM_POOLS[poolIndex].ptr;
+  return F64_MEM_POOLS[poolIndex].ptr;
 }
 
-function intarray(a: number[] | Int32Array): number {
-  const ptr = Module._malloc(a.length * 4);
-  const data = Module.HEAP32.subarray(ptr / 4, ptr / 4 + a.length);
-  for (let i = 0; i < a.length; i++) {
+function intarray(a: ArrayLike<number> | NdArray): number {
+  const ptr = Module._malloc(getLength(a) * 4);
+  const data = Module.HEAP32.subarray(ptr / 4, ptr / 4 + getLength(a));
+  for (let i = 0; i < getLength(a); i++) {
     data[i] = a[i];
   }
 

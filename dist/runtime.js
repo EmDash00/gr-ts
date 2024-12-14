@@ -47,55 +47,63 @@ const MEMTYPE_SIZE = {
     [MemType.F32]: 4,
     [MemType.F64]: 8,
 };
+/**
+ * Preallocated memory pool for buffers.
+ */
 class MemoryPool {
-    _capacity_bytes;
+    _capacity;
+    _memtype;
     _ptr;
     static MAX_SIZE_BYTES = 1048576 * 16; // 16 MiB
-    constructor(bytes) {
-        this._ptr = Module._malloc(bytes);
+    constructor(capacity, memtype) {
+        this._capacity = capacity;
+        this._memtype = memtype;
+        this._ptr = Module._malloc(capacity * MEMTYPE_SIZE[memtype]);
     }
     get ptr() {
         return this._ptr;
     }
     get capacity_bytes() {
-        return this._capacity_bytes;
+        return this._capacity * MEMTYPE_SIZE[this._memtype];
     }
-    reserve(bytes) {
+    get capacity() {
+        return this._capacity;
+    }
+    reserve(capacity) {
+        let bytes = capacity * MEMTYPE_SIZE[this._memtype];
         if (bytes > MemoryPool.MAX_SIZE_BYTES) {
             bytes = Math.max(bytes, MemoryPool.MAX_SIZE_BYTES);
             console.log("Maximum buffer size of 16 MiB reached for GR plotting.");
         }
         this._ptr = Module._realloc(this._ptr, bytes);
     }
-    copyFrom(container, memtype) {
+    copyFrom(container) {
         const N = Math.max(getLength(container));
+        let array = this.asArray();
         for (let i = 0; i < N; i++) {
-            if (i >= this.capacity_bytes) {
+            if (i >= this.capacity) {
                 this.grow();
+                array = this.asArray();
             }
-            let array = this.array(memtype);
             array[i] = getContainer(container, i);
         }
     }
-    array(memtype) {
-        return this.asArray(0, this.capacity_bytes / MEMTYPE_SIZE[memtype], memtype);
-    }
     grow() {
-        this._capacity_bytes *= 2;
-        this._capacity_bytes = Math.max(this.capacity_bytes, MemoryPool.MAX_SIZE_BYTES);
-        this._ptr = Module._realloc(this._ptr, this._capacity_bytes);
+        this._capacity *= 2;
+        const new_capacity_bytes = Math.max(this.capacity_bytes, MemoryPool.MAX_SIZE_BYTES);
+        this._ptr = Module._realloc(this._ptr, new_capacity_bytes);
         if (!this._ptr) {
             throw new Error("Module._realloc failed. Out of memory?");
         }
     }
-    asArray(index, length, memtype) {
-        const heap = HEAP_MAP[memtype];
-        const byteSize = MEMTYPE_SIZE[memtype];
+    asArray(index = 0, length = this.capacity) {
+        const heap = HEAP_MAP[this._memtype];
+        const byteSize = MEMTYPE_SIZE[this._memtype];
         const ptr = this._ptr / byteSize;
         return heap.subarray(ptr + index, ptr + index + length);
     }
 }
-const MEM_POOLS = Array.from({ length: 4 }, () => new MemoryPool(MEMTYPE_SIZE[MemType.F64] * 256));
+const F64_MEM_POOLS = Array.from({ length: 4 }, () => new MemoryPool(2048, MemType.F64));
 export class GRCanvas {
     _original_canvas_size;
     _dpr;
@@ -252,8 +260,6 @@ export class GRCanvas {
         const _y = floatarray(y, 1);
         this.select_canvas();
         gr_polyline_c(n, _x, _y);
-        freearray(_x);
-        freearray(_y);
     }
     /**
      * Draw marker symbols centered at the given data points.
@@ -266,8 +272,6 @@ export class GRCanvas {
         const _y = floatarray(y, 1);
         this.select_canvas();
         gr_polymarker_c(n, _x, _y);
-        freearray(_x);
-        freearray(_y);
     }
     text = function (x, y, str) {
         this.select_canvas();
@@ -304,8 +308,6 @@ export class GRCanvas {
         const _y = floatarray(y, 1);
         this.select_canvas();
         gr_fillarea_c(n, _x, _y);
-        freearray(_x);
-        freearray(_y);
     }
     /**
      * Display rasterlike images in a device-independent manner. The cell array
@@ -318,7 +320,7 @@ export class GRCanvas {
      * @param{number} ymax - Upper right edge of the image.
      * @param{number} dimx - X dimension of the color index array.
      * @param{number} dimy - Y dimension of the color index array.
-     * @param{number[] | Int32Array} color - Color index array.
+     * @param{ArrayLike<number> | NdArray} color - Color index array.
      */
     cellarray(xmin, xmax, ymin, ymax, dimx, dimy, color) {
         this.select_canvas();
@@ -344,8 +346,6 @@ export class GRCanvas {
         const _py = floatarray(py, 1);
         this.select_canvas();
         gr_spline_c(n, _px, _py, m, method);
-        freearray(_px);
-        freearray(_py);
     }
     /**
      * Interpolate data from arbitrary points at points on a rectangular grid.
@@ -384,12 +384,6 @@ export class GRCanvas {
         result[0].set(x);
         result[1].set(y);
         result[2].set(z);
-        freearray(_xd);
-        freearray(_yd);
-        freearray(_zd);
-        freearray(_x);
-        freearray(_y);
-        freearray(_z);
         return result;
     }
     /**
@@ -993,10 +987,6 @@ export class GRCanvas {
         const _e2 = floatarray(e2, 3);
         this.select_canvas();
         gr_verrorbars_c(n, _px, _py, _e1, _e2);
-        freearray(_px);
-        freearray(_py);
-        freearray(_e1);
-        freearray(_e2);
     }
     /**
      * Draw a standard horizontal error bar graph.
@@ -1014,10 +1004,6 @@ export class GRCanvas {
         const _e1 = floatarray(e1, 2);
         const _e2 = floatarray(e2, 3);
         gr_herrorbars_c(n, _px, _py, _e1, _e2);
-        freearray(_px);
-        freearray(_py);
-        freearray(_e1);
-        freearray(_e2);
     }
     /**
      * Draw a 3D curve using the current line attributes, starting from the
@@ -1036,9 +1022,6 @@ export class GRCanvas {
         const _py = floatarray(py, 1);
         const _pz = floatarray(pz, 2);
         gr_polyline3d_c(n, _px, _py, _pz);
-        freearray(_px);
-        freearray(_py);
-        freearray(_pz);
     }
     /**
      * Draw X, Y, and Z coordinate axes with linear and/or logarithmically spaced
@@ -1165,9 +1148,6 @@ export class GRCanvas {
         const _py = floatarray(py, 1);
         const _pz = floatarray(pz, 2);
         gr_surface_c(Nx, Ny, _px, _py, _pz, option);
-        freearray(_px);
-        freearray(_py);
-        freearray(_pz);
     }
     /**
      * Draw contours of a three-dimensional data set whose values are specified
@@ -1198,17 +1178,11 @@ export class GRCanvas {
         const _pz = floatarray(pz, 3);
         this.select_canvas();
         gr_contour_c(Nx, Ny, Nh, _px, _py, _h, _pz, major_h);
-        freearray(_px);
-        freearray(_py);
-        freearray(_h);
-        freearray(_pz);
     }
     hexbin(n, x, y, nbins) {
         const _x = floatarray(x, 0);
         const _y = floatarray(y, 1);
         const cntmax = gr_hexbin_c(n, _x, _y, nbins);
-        freearray(_x);
-        freearray(_y);
         return cntmax;
     }
     /**
@@ -1269,8 +1243,6 @@ export class GRCanvas {
         gr_adjustrange_c(_amin, _amax);
         amin = Module.HEAPF64[_amin / 8];
         amax = Module.HEAPF64[_amax / 8];
-        freearray(_amin);
-        freearray(_amax);
         return [amin, amax];
     }
     beginprint(pathname) {
@@ -1606,8 +1578,6 @@ export class GRCanvas {
         const _y = floatarray(y, 1);
         const _codes = uint8arrayfromstring(codes);
         gr_path_c(n, _x, _y, _codes);
-        freearray(_x);
-        freearray(_y);
         freearray(_codes);
     }
     setborderwidth(width) {
@@ -1908,14 +1878,13 @@ function free_vertexarray(ptr, n) {
     }
 }
 function floatarray(a, poolIndex) {
-    const N = getLength(a);
-    MEM_POOLS[poolIndex].copyFrom(a, MemType.F64);
-    return MEM_POOLS[poolIndex].ptr;
+    F64_MEM_POOLS[poolIndex].copyFrom(a);
+    return F64_MEM_POOLS[poolIndex].ptr;
 }
 function intarray(a) {
-    const ptr = Module._malloc(a.length * 4);
-    const data = Module.HEAP32.subarray(ptr / 4, ptr / 4 + a.length);
-    for (let i = 0; i < a.length; i++) {
+    const ptr = Module._malloc(getLength(a) * 4);
+    const data = Module.HEAP32.subarray(ptr / 4, ptr / 4 + getLength(a));
+    for (let i = 0; i < getLength(a); i++) {
         data[i] = a[i];
     }
     return ptr;

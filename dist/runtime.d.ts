@@ -88,9 +88,9 @@ export declare class GRCanvas {
      * @param{number} ymax - Upper right edge of the image.
      * @param{number} dimx - X dimension of the color index array.
      * @param{number} dimy - Y dimension of the color index array.
-     * @param{number[] | Int32Array} color - Color index array.
+     * @param{ArrayLike<number> | NdArray} color - Color index array.
      */
-    cellarray(xmin: number, xmax: number, ymin: number, ymax: number, dimx: number, dimy: number, color: number[] | Int32Array): void;
+    cellarray(xmin: number, xmax: number, ymin: number, ymax: number, dimx: number, dimy: number, color: ArrayLike<number> | NdArray): void;
     /**
      * Generate a cubic spline-fit, starting from the first data point and
      * ending at the last data point.
@@ -774,7 +774,7 @@ export declare class GRCanvas {
      * @param{COLOR_MODEL} model - The color model to use
      *  (default: COLOR_MODEL.RGB).
      */
-    drawimage(xmin: number, xmax: number, ymin: number, ymax: number, width: number, height: number, data: number[] | Int32Array, model?: COLOR_MODEL): void;
+    drawimage(xmin: number, xmax: number, ymin: number, ymax: number, width: number, height: number, data: ArrayLike<number> | NdArray, model?: COLOR_MODEL): void;
     importgraphics(path: string): void;
     setshadow(offsetx: number, offsety: number, blur: number): void;
     settransparency(alpha: number): void;
