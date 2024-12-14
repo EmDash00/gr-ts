@@ -4,6 +4,12 @@ interface Sized {
   length: number;
 }
 
+interface Indexable<T> extends Sized {
+  get(i: number): T;
+}
+
+export type NumericContainer = ArrayLike<number> | Indexable<number> | NdArray;
+
 export function getLength(x: Sized | NdArray): number {
     if ('length' in x) {
         return x.length;
@@ -14,7 +20,7 @@ export function getLength(x: Sized | NdArray): number {
     throw new Error("Invalid type: x must be either Sized or NdArray");
 }
 
-export function getContainer(x: ArrayLike<number> | NdArray, i: number): number {
+export function getContainer(x: NumericContainer, i: number): number {
     if (typeof x[0] !== 'undefined') {
         return x[i];
     } else if ('get' in x) {

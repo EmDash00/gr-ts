@@ -1,6 +1,12 @@
 import libGR from "./libgr.js";
 import type { GRModule } from "./module.js";
-import { assertEqualLength, getContainer, getLength } from "./util.js";
+import {
+  assertEqualLength,
+  getContainer,
+  NumericContainer,
+  getLength,
+} from "./util.js";
+export { NumericContainer } from "./util.js";
 
 import ModuleConfig from "./module.js";
 import {
@@ -115,7 +121,7 @@ class MemoryPool {
     this._ptr = Module._realloc(this._ptr, bytes);
   }
 
-  public copyFrom(container: ArrayLike<number> | NdArray) {
+  public copyFrom(container: NumericContainer) {
     const N = Math.max(getLength(container));
 
     let array = this.asArray();
@@ -337,10 +343,7 @@ export class GRCanvas {
    * @param {number[]} x - An array of the x coordinates.
    * @param {number[]} y - An array of the y coordinates.
    */
-  public polyline(
-    x: ArrayLike<number> | NdArray,
-    y: ArrayLike<number> | NdArray,
-  ) {
+  public polyline(x: NumericContainer, y: NumericContainer) {
     const n = assertEqualLength(x, y);
 
     const _x = floatarray(x, 0);
@@ -355,10 +358,7 @@ export class GRCanvas {
    * @param {number[]} x - An array of the x coordinates.
    * @param {number[]} y - An array of the y coordinates.
    */
-  public polymarker(
-    x: ArrayLike<number> | NdArray,
-    y: ArrayLike<number> | NdArray,
-  ) {
+  public polymarker(x: NumericContainer, y: NumericContainer) {
     const n = assertEqualLength(x, y);
 
     const _x = floatarray(x, 0);
@@ -404,13 +404,10 @@ export class GRCanvas {
    * The attributes that control the appearance of fill areas are fill area interior
    * style, fill area style index and fill area color index.
    *
-   * @param {ArrayLike<number> | NdArray} x - A list containing the X coordinates.
-   * @param {ArrayLike<number> | NdArray} y - A list containing the Y coordinates.
+   * @param {NumericContainer} x - A list containing the X coordinates.
+   * @param {NumericContainer} y - A list containing the Y coordinates.
    */
-  public fillarea(
-    x: ArrayLike<number> | NdArray,
-    y: ArrayLike<number> | NdArray,
-  ) {
+  public fillarea(x: NumericContainer, y: NumericContainer) {
     const n = assertEqualLength(x, y);
     const _x = floatarray(x, 0);
     const _y = floatarray(y, 1);
@@ -430,7 +427,7 @@ export class GRCanvas {
    * @param{number} ymax - Upper right edge of the image.
    * @param{number} dimx - X dimension of the color index array.
    * @param{number} dimy - Y dimension of the color index array.
-   * @param{ArrayLike<number> | NdArray} color - Color index array.
+   * @param{NumericContainer} color - Color index array.
    */
   public cellarray(
     xmin: number,
@@ -439,7 +436,7 @@ export class GRCanvas {
     ymax: number,
     dimx: number,
     dimy: number,
-    color: ArrayLike<number> | NdArray,
+    color: NumericContainer,
   ) {
     this.select_canvas();
 
@@ -463,8 +460,8 @@ export class GRCanvas {
   /**
    * Generate a cubic spline-fit, starting from the first data point and
    * ending at the last data point.
-   * @param{ArrayLike<number> | NdArray} px - A list containing the x coordinates.
-   * @param{ArrayLike<number> | NdArray} py - A list containing the y coordinates.
+   * @param{NumericContainer} px - A list containing the x coordinates.
+   * @param{NumericContainer} py - A list containing the y coordinates.
    * @param{number} m - The number of points to be drawn (`m` > `px.length`).
    * @param{SPLINE_SMOOTHING} method - The smoothing method.
    *
@@ -473,8 +470,8 @@ export class GRCanvas {
    * index.
    */
   public spline(
-    px: ArrayLike<number> | NdArray,
-    py: ArrayLike<number> | NdArray,
+    px: NumericContainer,
+    py: NumericContainer,
     m: number,
     method: SPLINE_SMOOTHING,
   ) {
@@ -490,11 +487,11 @@ export class GRCanvas {
   /**
    * Interpolate data from arbitrary points at points on a rectangular grid.
    *
-   * @param{ArrayLike<number> | NdArray} xd -
+   * @param{NumericContainer} xd -
    *  A list containing the X coordinates of the input points.
-   * @param{ArrayLike<number> | NdArray} yd -
+   * @param{NumericContainer} yd -
    *  A list containing the Y coordinates of the input points.
-   * @param{ArrayLike<number> | NdArray} zd -
+   * @param{NumericContainer} zd -
    *  A list containing the Z coordinates of the input points.
    * @param{number} nx - The number of points in the X direction for the output grid.
    * @param{number} ny - The number of points in the Y direction for the output grid.
@@ -504,9 +501,9 @@ export class GRCanvas {
    * interpolated values on the `nx` x `ny` grid points.
    */
   public gridit(
-    xd: ArrayLike<number> | NdArray,
-    yd: ArrayLike<number> | NdArray,
-    zd: ArrayLike<number> | NdArray,
+    xd: NumericContainer,
+    yd: NumericContainer,
+    zd: NumericContainer,
     nx: number,
     ny: number,
   ): [Float64Array, Float64Array, Float64Array] {
@@ -1213,18 +1210,18 @@ export class GRCanvas {
 
   /**
    * Draw a standard vertical error bar graph.
-   * @param{ArrayLike<number> | NdArray} px - A list containing the x coordinates.
-   * @param{ArrayLike<number> | NdArray} py - A list containing the y coordinates.
-   * @param{ArrayLike<number> | NdArray} e1 -
+   * @param{NumericContainer} px - A list containing the x coordinates.
+   * @param{NumericContainer} py - A list containing the y coordinates.
+   * @param{NumericContainer} e1 -
    *  The absolute values of the lower error bar data.
-   * @param{ArrayLike<number> | NdArray} e2 -
+   * @param{NumericContainer} e2 -
    *  The absolute values of the upper error bar data.
    */
   public verrorbars(
-    px: ArrayLike<number> | NdArray,
-    py: ArrayLike<number> | NdArray,
-    e1: ArrayLike<number> | NdArray,
-    e2: ArrayLike<number> | NdArray,
+    px: NumericContainer,
+    py: NumericContainer,
+    e1: NumericContainer,
+    e2: NumericContainer,
   ) {
     const n = assertEqualLength(px, py, e1, e2);
 
@@ -1239,18 +1236,18 @@ export class GRCanvas {
 
   /**
    * Draw a standard horizontal error bar graph.
-   * @param{ArrayLike<number> | NdArray} px - A list containing the x coordinates.
-   * @param{ArrayLike<number> | NdArray} py - A list containing the y coordinates.
-   * @param{ArrayLike<number> | NdArray} e1 -
+   * @param{NumericContainer} px - A list containing the x coordinates.
+   * @param{NumericContainer} py - A list containing the y coordinates.
+   * @param{NumericContainer} e1 -
    *  The absolute values of the lower error bar data.
-   * @param{ArrayLike<number> | NdArray} e2 -
+   * @param{NumericContainer} e2 -
    *  The absolute values of the upper error bar data.
    */
   public herrorbars(
-    px: ArrayLike<number> | NdArray,
-    py: ArrayLike<number> | NdArray,
-    e1: ArrayLike<number> | NdArray,
-    e2: ArrayLike<number> | NdArray,
+    px: NumericContainer,
+    py: NumericContainer,
+    e1: NumericContainer,
+    e2: NumericContainer,
   ) {
     const n = assertEqualLength(px, py, e1, e2);
 
@@ -1265,18 +1262,18 @@ export class GRCanvas {
   /**
    * Draw a 3D curve using the current line attributes, starting from the
    * first data point and ending at the last data point.
-   * @param {ArrayLike<number> | NdArray} px - An array of the x coordinates.
-   * @param {ArrayLike<number> | NdArray} py - An array of the y coordinates.
-   * @param {ArrayLike<number> | NdArray} pz - An array of the y coordinates.
+   * @param {NumericContainer} px - An array of the x coordinates.
+   * @param {NumericContainer} py - An array of the y coordinates.
+   * @param {NumericContainer} pz - An array of the y coordinates.
    *
    * The values for `x`, `y` and `z` are in world coordinates. The attributes that
    * control the appearance of a polyline are linetype, linewidth and color
    * index.
    */
   public polyline3d(
-    px: ArrayLike<number> | NdArray,
-    py: ArrayLike<number> | NdArray,
-    pz: ArrayLike<number> | NdArray,
+    px: NumericContainer,
+    py: NumericContainer,
+    pz: NumericContainer,
   ) {
     const n = assertEqualLength(px, py, pz);
     const _px = floatarray(px, 0);
@@ -1438,17 +1435,17 @@ export class GRCanvas {
 
   /**
    * Draw a three-dimensional surface plot for the given data points.
-   * @param{ArrayLike<number> | NdArray} px - A list containing the x coordinates.
-   * @param{ArrayLike<number> | NdArray} py - A list containing the y coordinates.
-   * @param{ArrayLike<number> | NdArray} pz -
+   * @param{NumericContainer} px - A list containing the x coordinates.
+   * @param{NumericContainer} py - A list containing the y coordinates.
+   * @param{NumericContainer} pz -
    *  A list of length `px.length` * `py.length` or an appropriately
    *  dimensioned array containing the z coordinates.
    * @param{SURFACE_OPTION} option - Surface display option.
    */
   public surface(
-    px: ArrayLike<number> | NdArray,
-    py: ArrayLike<number> | NdArray,
-    pz: ArrayLike<number> | NdArray,
+    px: NumericContainer,
+    py: NumericContainer,
+    pz: NumericContainer,
     option: SURFACE_OPTION,
   ) {
     const Nx = getLength(px);
@@ -1468,11 +1465,11 @@ export class GRCanvas {
   /**
    * Draw contours of a three-dimensional data set whose values are specified
    * over a rectangular mesh. Contour lines may optionally be labeled.
-   * @param{ArrayLike<number> | NdArray} px - A list containing the x coordinates.
-   * @param{ArrayLike<number> | NdArray} py - A list containing the y coordinates.
-   * @param{ArrayLike<number> | NdArray} h -
+   * @param{NumericContainer} px - A list containing the x coordinates.
+   * @param{NumericContainer} py - A list containing the y coordinates.
+   * @param{NumericContainer} h -
    *  A list containing the z coordinates for the height.
-   * @param{ArrayLike<number> | NdArray} pz -
+   * @param{NumericContainer} pz -
    *  A list of length `x.length` * `y.length` containing the z coordinates.
    * @param{number} major_h -
    *  Directs GR to label contour lines. For example, a value of 3 would label
@@ -1481,10 +1478,10 @@ export class GRCanvas {
    *  of 1000 to `major_h`.
    */
   public contour(
-    px: ArrayLike<number> | NdArray,
-    py: ArrayLike<number> | NdArray,
-    h: ArrayLike<number> | NdArray,
-    pz: ArrayLike<number> | NdArray,
+    px: NumericContainer,
+    py: NumericContainer,
+    h: NumericContainer,
+    pz: NumericContainer,
     major_h: number,
   ) {
     const Nx = getLength(px);
@@ -1781,7 +1778,7 @@ export class GRCanvas {
     ymax: number,
     width: number,
     height: number,
-    data: ArrayLike<number> | NdArray,
+    data: NumericContainer,
     model: COLOR_MODEL = COLOR_MODEL.RGB,
   ) {
     this.select_canvas();
@@ -1910,11 +1907,11 @@ export class GRCanvas {
   }
 
   public shade(
-    x: ArrayLike<number> | NdArray,
-    y: ArrayLike<number> | NdArray,
+    x: NumericContainer,
+    y: NumericContainer,
     lines: number,
     xform: XFORM,
-    roi: ArrayLike<number> | NdArray,
+    roi: NumericContainer,
     w: number,
     h: number,
   ) {
@@ -1933,15 +1930,15 @@ export class GRCanvas {
    * Display a point set as an aggregated and rasterized image. The values
    * for `x` and `y` are in world coordinates.
    *
-   * @param{ArrayLike<number> | NdArray} x - A list containing the x coordinates.
-   * @param{ArrayLike<number> | NdArray} y - A list containing the y coordinates.
+   * @param{NumericContainer} x - A list containing the x coordinates.
+   * @param{NumericContainer} y - A list containing the y coordinates.
    * @param{XFORM} xform - The transformation type to use for color mapping.
    * @param{[number, number]} dims - The size of the grid used for rasterization
    *  (default: `[1200, 1200]`)
    */
   public shadepoints(
-    x: ArrayLike<number> | NdArray,
-    y: ArrayLike<number> | NdArray,
+    x: NumericContainer,
+    y: NumericContainer,
     xform: XFORM,
     dims: [number, number] = [1200, 1200],
   ) {
@@ -1957,15 +1954,15 @@ export class GRCanvas {
    * Display a line set as an aggregated and rasterized image. The values
    * for `x` and `y` are in world coordinates.
    *
-   * @param{ArrayLike<number> | NdArray} x - A list containing the x coordinates.
-   * @param{ArrayLike<number> | NdArray} y - A list containing the y coordinates.
+   * @param{NumericContainer} x - A list containing the x coordinates.
+   * @param{NumericContainer} y - A list containing the y coordinates.
    * @param{XFORM} xform - The transformation type to use for color mapping.
    * @param{[number, number]} dims - The size of the grid used for rasterization
    *  (default: `[1200, 1200]`)
    */
   public shadelines(
-    x: ArrayLike<number> | NdArray,
-    y: ArrayLike<number> | NdArray,
+    x: NumericContainer,
+    y: NumericContainer,
     xform: XFORM,
     dims: [number, number] = [1200, 1200],
   ) {
@@ -2012,8 +2009,8 @@ export class GRCanvas {
 
   public path(
     n: number,
-    x: ArrayLike<number> | NdArray,
-    y: ArrayLike<number> | NdArray,
+    x: NumericContainer,
+    y: NumericContainer,
     codes: string,
   ) {
     const _x = floatarray(x, 0);
@@ -2438,13 +2435,13 @@ function free_vertexarray(ptr: number, n: number) {
   }
 }
 
-function floatarray(a: ArrayLike<number> | NdArray, poolIndex: number): number {
+function floatarray(a: NumericContainer, poolIndex: number): number {
   F64_MEM_POOLS[poolIndex].copyFrom(a);
 
   return F64_MEM_POOLS[poolIndex].ptr;
 }
 
-function intarray(a: ArrayLike<number> | NdArray): number {
+function intarray(a: NumericContainer): number {
   const ptr = Module._malloc(getLength(a) * 4);
   const data = Module.HEAP32.subarray(ptr / 4, ptr / 4 + getLength(a));
   for (let i = 0; i < getLength(a); i++) {

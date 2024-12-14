@@ -1,5 +1,5 @@
 import libGR from "./libgr.js";
-import { assertEqualLength, getContainer, getLength } from "./util.js";
+import { assertEqualLength, getContainer, getLength, } from "./util.js";
 import ModuleConfig from "./module.js";
 import { COLOR_MODEL, GRM_EVENT, } from "./constants.js";
 const Module = (await libGR(ModuleConfig));
@@ -299,8 +299,8 @@ export class GRCanvas {
      * The attributes that control the appearance of fill areas are fill area interior
      * style, fill area style index and fill area color index.
      *
-     * @param {ArrayLike<number> | NdArray} x - A list containing the X coordinates.
-     * @param {ArrayLike<number> | NdArray} y - A list containing the Y coordinates.
+     * @param {NumericContainer} x - A list containing the X coordinates.
+     * @param {NumericContainer} y - A list containing the Y coordinates.
      */
     fillarea(x, y) {
         const n = assertEqualLength(x, y);
@@ -320,7 +320,7 @@ export class GRCanvas {
      * @param{number} ymax - Upper right edge of the image.
      * @param{number} dimx - X dimension of the color index array.
      * @param{number} dimy - Y dimension of the color index array.
-     * @param{ArrayLike<number> | NdArray} color - Color index array.
+     * @param{NumericContainer} color - Color index array.
      */
     cellarray(xmin, xmax, ymin, ymax, dimx, dimy, color) {
         this.select_canvas();
@@ -331,8 +331,8 @@ export class GRCanvas {
     /**
      * Generate a cubic spline-fit, starting from the first data point and
      * ending at the last data point.
-     * @param{ArrayLike<number> | NdArray} px - A list containing the x coordinates.
-     * @param{ArrayLike<number> | NdArray} py - A list containing the y coordinates.
+     * @param{NumericContainer} px - A list containing the x coordinates.
+     * @param{NumericContainer} py - A list containing the y coordinates.
      * @param{number} m - The number of points to be drawn (`m` > `px.length`).
      * @param{SPLINE_SMOOTHING} method - The smoothing method.
      *
@@ -350,11 +350,11 @@ export class GRCanvas {
     /**
      * Interpolate data from arbitrary points at points on a rectangular grid.
      *
-     * @param{ArrayLike<number> | NdArray} xd -
+     * @param{NumericContainer} xd -
      *  A list containing the X coordinates of the input points.
-     * @param{ArrayLike<number> | NdArray} yd -
+     * @param{NumericContainer} yd -
      *  A list containing the Y coordinates of the input points.
-     * @param{ArrayLike<number> | NdArray} zd -
+     * @param{NumericContainer} zd -
      *  A list containing the Z coordinates of the input points.
      * @param{number} nx - The number of points in the X direction for the output grid.
      * @param{number} ny - The number of points in the Y direction for the output grid.
@@ -972,11 +972,11 @@ export class GRCanvas {
     }
     /**
      * Draw a standard vertical error bar graph.
-     * @param{ArrayLike<number> | NdArray} px - A list containing the x coordinates.
-     * @param{ArrayLike<number> | NdArray} py - A list containing the y coordinates.
-     * @param{ArrayLike<number> | NdArray} e1 -
+     * @param{NumericContainer} px - A list containing the x coordinates.
+     * @param{NumericContainer} py - A list containing the y coordinates.
+     * @param{NumericContainer} e1 -
      *  The absolute values of the lower error bar data.
-     * @param{ArrayLike<number> | NdArray} e2 -
+     * @param{NumericContainer} e2 -
      *  The absolute values of the upper error bar data.
      */
     verrorbars(px, py, e1, e2) {
@@ -990,11 +990,11 @@ export class GRCanvas {
     }
     /**
      * Draw a standard horizontal error bar graph.
-     * @param{ArrayLike<number> | NdArray} px - A list containing the x coordinates.
-     * @param{ArrayLike<number> | NdArray} py - A list containing the y coordinates.
-     * @param{ArrayLike<number> | NdArray} e1 -
+     * @param{NumericContainer} px - A list containing the x coordinates.
+     * @param{NumericContainer} py - A list containing the y coordinates.
+     * @param{NumericContainer} e1 -
      *  The absolute values of the lower error bar data.
-     * @param{ArrayLike<number> | NdArray} e2 -
+     * @param{NumericContainer} e2 -
      *  The absolute values of the upper error bar data.
      */
     herrorbars(px, py, e1, e2) {
@@ -1008,9 +1008,9 @@ export class GRCanvas {
     /**
      * Draw a 3D curve using the current line attributes, starting from the
      * first data point and ending at the last data point.
-     * @param {ArrayLike<number> | NdArray} px - An array of the x coordinates.
-     * @param {ArrayLike<number> | NdArray} py - An array of the y coordinates.
-     * @param {ArrayLike<number> | NdArray} pz - An array of the y coordinates.
+     * @param {NumericContainer} px - An array of the x coordinates.
+     * @param {NumericContainer} py - An array of the y coordinates.
+     * @param {NumericContainer} pz - An array of the y coordinates.
      *
      * The values for `x`, `y` and `z` are in world coordinates. The attributes that
      * control the appearance of a polyline are linetype, linewidth and color
@@ -1130,9 +1130,9 @@ export class GRCanvas {
     }
     /**
      * Draw a three-dimensional surface plot for the given data points.
-     * @param{ArrayLike<number> | NdArray} px - A list containing the x coordinates.
-     * @param{ArrayLike<number> | NdArray} py - A list containing the y coordinates.
-     * @param{ArrayLike<number> | NdArray} pz -
+     * @param{NumericContainer} px - A list containing the x coordinates.
+     * @param{NumericContainer} py - A list containing the y coordinates.
+     * @param{NumericContainer} pz -
      *  A list of length `px.length` * `py.length` or an appropriately
      *  dimensioned array containing the z coordinates.
      * @param{SURFACE_OPTION} option - Surface display option.
@@ -1152,11 +1152,11 @@ export class GRCanvas {
     /**
      * Draw contours of a three-dimensional data set whose values are specified
      * over a rectangular mesh. Contour lines may optionally be labeled.
-     * @param{ArrayLike<number> | NdArray} px - A list containing the x coordinates.
-     * @param{ArrayLike<number> | NdArray} py - A list containing the y coordinates.
-     * @param{ArrayLike<number> | NdArray} h -
+     * @param{NumericContainer} px - A list containing the x coordinates.
+     * @param{NumericContainer} py - A list containing the y coordinates.
+     * @param{NumericContainer} h -
      *  A list containing the z coordinates for the height.
-     * @param{ArrayLike<number> | NdArray} pz -
+     * @param{NumericContainer} pz -
      *  A list of length `x.length` * `y.length` containing the z coordinates.
      * @param{number} major_h -
      *  Directs GR to label contour lines. For example, a value of 3 would label
@@ -1517,8 +1517,8 @@ export class GRCanvas {
      * Display a point set as an aggregated and rasterized image. The values
      * for `x` and `y` are in world coordinates.
      *
-     * @param{ArrayLike<number> | NdArray} x - A list containing the x coordinates.
-     * @param{ArrayLike<number> | NdArray} y - A list containing the y coordinates.
+     * @param{NumericContainer} x - A list containing the x coordinates.
+     * @param{NumericContainer} y - A list containing the y coordinates.
      * @param{XFORM} xform - The transformation type to use for color mapping.
      * @param{[number, number]} dims - The size of the grid used for rasterization
      *  (default: `[1200, 1200]`)
@@ -1534,8 +1534,8 @@ export class GRCanvas {
      * Display a line set as an aggregated and rasterized image. The values
      * for `x` and `y` are in world coordinates.
      *
-     * @param{ArrayLike<number> | NdArray} x - A list containing the x coordinates.
-     * @param{ArrayLike<number> | NdArray} y - A list containing the y coordinates.
+     * @param{NumericContainer} x - A list containing the x coordinates.
+     * @param{NumericContainer} y - A list containing the y coordinates.
      * @param{XFORM} xform - The transformation type to use for color mapping.
      * @param{[number, number]} dims - The size of the grid used for rasterization
      *  (default: `[1200, 1200]`)
