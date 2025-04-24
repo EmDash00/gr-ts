@@ -2805,8 +2805,8 @@ var Module = (() => {
         else {
             context.textAlign = "left";
         } var text = UTF8ToString(chars); context.fillText(text, 0, top * context.canvas.height * valg); context.setTransform(Module.dpr, 0, 0, Module.dpr, 0, 0); }
-        function _tobson_write() { abort("missing function: tobson_write"); }
-        _tobson_write.stub = true;
+        function _toBsonWrite() { abort("missing function: toBsonWrite"); }
+        _toBsonWrite.stub = true;
         var handleException = e => { if (e instanceof ExitStatus || e == "unwind") {
             return EXITSTATUS;
         } quit_(1, e); };
@@ -5143,7 +5143,7 @@ var Module = (() => {
         var preloadedImages = {};
         var preloadedAudios = {};
         registerPreMainLoop(() => GL.newRenderingFrameStarted());
-        var wasmImports = { b: ___assert_fail, Z: ___call_sighandler, a: ___cxa_throw, Q: ___syscall_connect, ja: ___syscall_dup, ga: ___syscall_dup3, ka: ___syscall_faccessat, l: ___syscall_fcntl64, fa: ___syscall_getcwd, Y: ___syscall_getdents64, na: ___syscall_ioctl, ba: ___syscall_mkdirat, B: ___syscall_openat, X: ___syscall_readlinkat, P: ___syscall_recvfrom, U: ___syscall_renameat, V: ___syscall_rmdir, O: ___syscall_sendto, A: ___syscall_socket, aa: ___syscall_stat64, W: ___syscall_unlinkat, la: __abort_js, G: __embind_register_bigint, M: __embind_register_bool, L: __embind_register_emval, z: __embind_register_float, f: __embind_register_integer, c: __embind_register_memory_view, y: __embind_register_std_string, v: __embind_register_std_wstring, N: __embind_register_void, oa: __emscripten_fs_load_embedded_files, ha: __emscripten_get_now_is_monotonic, ia: __emscripten_memcpy_js, $: __emscripten_runtime_keepalive_clear, T: __emscripten_system, R: __emscripten_throw_longjmp, J: __localtime_js, H: __mmap_js, I: __munmap_js, ma: __tzset_js, q: _emscripten_date_now, S: _emscripten_resize_heap, da: _environ_get, ea: _environ_sizes_get, i: _exit, r: _fd_close, ca: _fd_fdstat_get, D: _fd_read, K: _fd_seek, C: _fd_write, t: _getaddrinfo, p: invoke_ii, k: invoke_iii, j: invoke_iiii, g: invoke_iiiii, pa: invoke_iiiiii, E: invoke_v, d: invoke_vi, e: invoke_vii, u: invoke_viii, h: invoke_viiii, n: invoke_viiiii, sa: _js_cellarray, x: _js_circle, xa: _js_clear, s: _js_clip_path, ra: _js_draw_path, qa: _js_fill_routine, za: _js_get_ws_height, ya: _js_get_ws_width, ua: _js_line, o: _js_line_routine, ta: _js_pattern_routine, va: _js_point, F: _js_reset_clipping, wa: _js_stroke, w: _js_text, _: _proc_exit, m: _tobson_write };
+        var wasmImports = { b: ___assert_fail, Z: ___call_sighandler, a: ___cxa_throw, Q: ___syscall_connect, ja: ___syscall_dup, ga: ___syscall_dup3, ka: ___syscall_faccessat, l: ___syscall_fcntl64, fa: ___syscall_getcwd, Y: ___syscall_getdents64, na: ___syscall_ioctl, ba: ___syscall_mkdirat, B: ___syscall_openat, X: ___syscall_readlinkat, P: ___syscall_recvfrom, U: ___syscall_renameat, V: ___syscall_rmdir, O: ___syscall_sendto, A: ___syscall_socket, aa: ___syscall_stat64, W: ___syscall_unlinkat, la: __abort_js, G: __embind_register_bigint, M: __embind_register_bool, L: __embind_register_emval, z: __embind_register_float, f: __embind_register_integer, c: __embind_register_memory_view, y: __embind_register_std_string, v: __embind_register_std_wstring, N: __embind_register_void, oa: __emscripten_fs_load_embedded_files, ha: __emscripten_get_now_is_monotonic, ia: __emscripten_memcpy_js, $: __emscripten_runtime_keepalive_clear, T: __emscripten_system, R: __emscripten_throw_longjmp, J: __localtime_js, H: __mmap_js, I: __munmap_js, ma: __tzset_js, q: _emscripten_date_now, S: _emscripten_resize_heap, da: _environ_get, ea: _environ_sizes_get, i: _exit, r: _fd_close, ca: _fd_fdstat_get, D: _fd_read, K: _fd_seek, C: _fd_write, t: _getaddrinfo, p: invoke_ii, k: invoke_iii, j: invoke_iiii, g: invoke_iiiii, pa: invoke_iiiiii, E: invoke_v, d: invoke_vi, e: invoke_vii, u: invoke_viii, h: invoke_viiii, n: invoke_viiiii, sa: _js_cellarray, x: _js_circle, xa: _js_clear, s: _js_clip_path, ra: _js_draw_path, qa: _js_fill_routine, za: _js_get_ws_height, ya: _js_get_ws_width, ua: _js_line, o: _js_line_routine, ta: _js_pattern_routine, va: _js_point, F: _js_reset_clipping, wa: _js_stroke, w: _js_text, _: _proc_exit, m: _toBsonWrite };
         var wasmExports = createWasm();
         var ___wasm_call_ctors = () => (___wasm_call_ctors = wasmExports["Ba"])();
         var _free = Module["_free"] = a0 => (_free = Module["_free"] = wasmExports["Ca"])(a0);
@@ -5157,14 +5157,14 @@ var Module = (() => {
         var _grm_dump_json_str = Module["_grm_dump_json_str"] = () => (_grm_dump_json_str = Module["_grm_dump_json_str"] = wasmExports["La"])();
         var _grm_register = Module["_grm_register"] = (a0, a1) => (_grm_register = Module["_grm_register"] = wasmExports["Ma"])(a0, a1);
         var _grm_unregister = Module["_grm_unregister"] = a0 => (_grm_unregister = Module["_grm_unregister"] = wasmExports["Na"])(a0);
-        var _grm_input = Module["_grm_input"] = a0 => (_grm_input = Module["_grm_input"] = wasmExports["Oa"])(a0);
-        var _gr_savestate = Module["_gr_savestate"] = () => (_gr_savestate = Module["_gr_savestate"] = wasmExports["Pa"])();
-        var _gr_setviewport = Module["_gr_setviewport"] = (a0, a1, a2, a3) => (_gr_setviewport = Module["_gr_setviewport"] = wasmExports["Qa"])(a0, a1, a2, a3);
-        var _gr_setwindow = Module["_gr_setwindow"] = (a0, a1, a2, a3) => (_gr_setwindow = Module["_gr_setwindow"] = wasmExports["Ra"])(a0, a1, a2, a3);
-        var _gr_setscale = Module["_gr_setscale"] = a0 => (_gr_setscale = Module["_gr_setscale"] = wasmExports["Sa"])(a0);
-        var _gr_wctondc = Module["_gr_wctondc"] = (a0, a1) => (_gr_wctondc = Module["_gr_wctondc"] = wasmExports["Ta"])(a0, a1);
-        var _gr_restorestate = Module["_gr_restorestate"] = () => (_gr_restorestate = Module["_gr_restorestate"] = wasmExports["Ua"])();
-        var _gr_ndctowc = Module["_gr_ndctowc"] = (a0, a1) => (_gr_ndctowc = Module["_gr_ndctowc"] = wasmExports["Va"])(a0, a1);
+        var _gr_savestate = Module["_gr_savestate"] = () => (_gr_savestate = Module["_gr_savestate"] = wasmExports["Oa"])();
+        var _gr_setviewport = Module["_gr_setviewport"] = (a0, a1, a2, a3) => (_gr_setviewport = Module["_gr_setviewport"] = wasmExports["Pa"])(a0, a1, a2, a3);
+        var _gr_setwindow = Module["_gr_setwindow"] = (a0, a1, a2, a3) => (_gr_setwindow = Module["_gr_setwindow"] = wasmExports["Qa"])(a0, a1, a2, a3);
+        var _gr_setscale = Module["_gr_setscale"] = a0 => (_gr_setscale = Module["_gr_setscale"] = wasmExports["Ra"])(a0);
+        var _gr_wctondc = Module["_gr_wctondc"] = (a0, a1) => (_gr_wctondc = Module["_gr_wctondc"] = wasmExports["Sa"])(a0, a1);
+        var _gr_restorestate = Module["_gr_restorestate"] = () => (_gr_restorestate = Module["_gr_restorestate"] = wasmExports["Ta"])();
+        var _gr_ndctowc = Module["_gr_ndctowc"] = (a0, a1) => (_gr_ndctowc = Module["_gr_ndctowc"] = wasmExports["Ua"])(a0, a1);
+        var _grm_input = Module["_grm_input"] = a0 => (_grm_input = Module["_grm_input"] = wasmExports["Va"])(a0);
         var _grm_is3d = Module["_grm_is3d"] = (a0, a1) => (_grm_is3d = Module["_grm_is3d"] = wasmExports["Wa"])(a0, a1);
         var _grm_get_box = Module["_grm_get_box"] = (a0, a1, a2, a3, a4, a5, a6, a7, a8) => (_grm_get_box = Module["_grm_get_box"] = wasmExports["Xa"])(a0, a1, a2, a3, a4, a5, a6, a7, a8);
         var _grm_get_tooltip = Module["_grm_get_tooltip"] = (a0, a1) => (_grm_get_tooltip = Module["_grm_get_tooltip"] = wasmExports["Ya"])(a0, a1);
@@ -5217,8 +5217,8 @@ var Module = (() => {
         var _gr_updatews = Module["_gr_updatews"] = () => (_gr_updatews = Module["_gr_updatews"] = wasmExports["Rb"])();
         var _gr_inqviewport = Module["_gr_inqviewport"] = (a0, a1, a2, a3) => (_gr_inqviewport = Module["_gr_inqviewport"] = wasmExports["Sb"])(a0, a1, a2, a3);
         var _gr_inqwindow = Module["_gr_inqwindow"] = (a0, a1, a2, a3) => (_gr_inqwindow = Module["_gr_inqwindow"] = wasmExports["Tb"])(a0, a1, a2, a3);
-        var _gr_axes3d = Module["_gr_axes3d"] = (a0, a1, a2, a3, a4, a5, a6, a7, a8, a9) => (_gr_axes3d = Module["_gr_axes3d"] = wasmExports["Ub"])(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9);
-        var _gr_cellarray = Module["_gr_cellarray"] = (a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10) => (_gr_cellarray = Module["_gr_cellarray"] = wasmExports["Vb"])(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10);
+        var _gr_cellarray = Module["_gr_cellarray"] = (a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10) => (_gr_cellarray = Module["_gr_cellarray"] = wasmExports["Ub"])(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10);
+        var _gr_axes3d = Module["_gr_axes3d"] = (a0, a1, a2, a3, a4, a5, a6, a7, a8, a9) => (_gr_axes3d = Module["_gr_axes3d"] = wasmExports["Vb"])(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9);
         var _gr_inqlinecolorind = Module["_gr_inqlinecolorind"] = a0 => (_gr_inqlinecolorind = Module["_gr_inqlinecolorind"] = wasmExports["Wb"])(a0);
         var _gr_drawarc = Module["_gr_drawarc"] = (a0, a1, a2, a3, a4, a5) => (_gr_drawarc = Module["_gr_drawarc"] = wasmExports["Xb"])(a0, a1, a2, a3, a4, a5);
         var _gr_drawgraphics = Module["_gr_drawgraphics"] = a0 => (_gr_drawgraphics = Module["_gr_drawgraphics"] = wasmExports["Yb"])(a0);
@@ -5307,7 +5307,7 @@ var Module = (() => {
         var __emscripten_stack_restore = a0 => (__emscripten_stack_restore = wasmExports["zd"])(a0);
         var __emscripten_stack_alloc = a0 => (__emscripten_stack_alloc = wasmExports["Ad"])(a0);
         var _emscripten_stack_get_current = () => (_emscripten_stack_get_current = wasmExports["Bd"])();
-        var ___emscripten_embedded_file_data = Module["___emscripten_embedded_file_data"] = 4945780;
+        var ___emscripten_embedded_file_data = Module["___emscripten_embedded_file_data"] = 4947812;
         function invoke_iii(index, a1, a2) { var sp = stackSave(); try {
             return getWasmTableEntry(index)(a1, a2);
         }

@@ -78,7 +78,6 @@ interface WasmModule {
   _grm_dump_json_str(): number;
   _grm_register(_0: number, _1: number): number;
   _grm_unregister(_0: number): number;
-  _grm_input(_0: number): number;
   _gr_savestate(): void;
   _gr_setviewport(_0: number, _1: number, _2: number, _3: number): void;
   _gr_setwindow(_0: number, _1: number, _2: number, _3: number): void;
@@ -86,6 +85,7 @@ interface WasmModule {
   _gr_wctondc(_0: number, _1: number): void;
   _gr_restorestate(): void;
   _gr_ndctowc(_0: number, _1: number): void;
+  _grm_input(_0: number): number;
   _grm_is3d(_0: number, _1: number): number;
   _grm_get_box(_0: number, _1: number, _2: number, _3: number, _4: number, _5: number, _6: number, _7: number, _8: number): number;
   _grm_get_tooltip(_0: number, _1: number): number;
@@ -138,8 +138,8 @@ interface WasmModule {
   _gr_updatews(): void;
   _gr_inqviewport(_0: number, _1: number, _2: number, _3: number): void;
   _gr_inqwindow(_0: number, _1: number, _2: number, _3: number): void;
-  _gr_axes3d(_0: number, _1: number, _2: number, _3: number, _4: number, _5: number, _6: number, _7: number, _8: number, _9: number): void;
   _gr_cellarray(_0: number, _1: number, _2: number, _3: number, _4: number, _5: number, _6: number, _7: number, _8: number, _9: number, _10: number): void;
+  _gr_axes3d(_0: number, _1: number, _2: number, _3: number, _4: number, _5: number, _6: number, _7: number, _8: number, _9: number): void;
   _gr_inqlinecolorind(_0: number): void;
   _gr_drawarc(_0: number, _1: number, _2: number, _3: number, _4: number, _5: number): void;
   _gr_drawgraphics(_0: number): number;
