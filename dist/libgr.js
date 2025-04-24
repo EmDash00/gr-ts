@@ -5307,7 +5307,7 @@ var Module = (() => {
         var __emscripten_stack_restore = a0 => (__emscripten_stack_restore = wasmExports["zd"])(a0);
         var __emscripten_stack_alloc = a0 => (__emscripten_stack_alloc = wasmExports["Ad"])(a0);
         var _emscripten_stack_get_current = () => (_emscripten_stack_get_current = wasmExports["Bd"])();
-        var ___emscripten_embedded_file_data = Module["___emscripten_embedded_file_data"] = 4947812;
+        var ___emscripten_embedded_file_data = Module["___emscripten_embedded_file_data"] = 4944116;
         function invoke_iii(index, a1, a2) { var sp = stackSave(); try {
             return getWasmTableEntry(index)(a1, a2);
         }
